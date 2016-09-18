@@ -1,1 +1,6 @@
-# tpAlegreEiroaARQ1S2
+# Trabajo práctico Arquitectura de Software -  Segundo semestre 2016
+
+
+Integrantes: 
+-Alegre Pable
+-Eiroa Mauro
