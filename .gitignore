@@ -63,3 +63,9 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+
+target
+node
+node_modules
+bower_components
+log.txt
