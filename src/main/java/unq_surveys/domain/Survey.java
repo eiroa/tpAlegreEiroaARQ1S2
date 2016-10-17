@@ -1,15 +1,18 @@
 package unq_surveys.domain;
 
 import org.springframework.data.annotation.Id;
+import lombok.Data;
 
 /**
  * Definicion de una encuesta
  * Se requiere definir un id y constructor vacio para mongo
- * Se recomienda tambien tener un toString
+ * Notar el annotation Data, este annotation lo provee la libreria lombok, reduce drásticamente
+ * el "boilerplate" de java, al agregar automáticamente getters, setters, constructors, toString, hash, equals, etc
  * 
  * @author eiroa
  *
  */
+@Data
 public class Survey {
 	
 		@Id
@@ -30,45 +33,6 @@ public class Survey {
 		}
 		
 		
-		
-		public String getId() {
-			return id;
-		}
-
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		public String getHelpText() {
-			return helpText;
-		}
-
-		public void setHelpText(String helpText) {
-			this.helpText = helpText;
-		}
-
-		@Override
-		public String toString(){
-			return String.format("Survey[id=%s, name='%s']",
-	                id, name);
-			
-		}
 		
 	   
 }
