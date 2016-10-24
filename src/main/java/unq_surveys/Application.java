@@ -37,9 +37,9 @@ public class Application implements CommandLineRunner {
 		repository.deleteAll();
 
 		// save a couple of Surveys
-		repository.save(new Survey( "encuesta 1q 2016","Desc","help"));
-		repository.save(new Survey("encuesta 2q 2016","Desc","help"));
-		repository.save(new Survey("DARTH VADER","Desc","help"));
+		repository.save(new Survey( "Encuesta 1q 2016 LDS","Encuesta de inscripción LDS 1 cuatrimestre 2016","Completar todas las respuestas"));
+		repository.save(new Survey("Encuesta 2q 2016 LDS","Encuesta de inscripción LDS 2 cuatrimestre 2016","Completar todas las respuestas"));
+		repository.save(new Survey("Encuesta 1q 2016 TPI","Encuesta de inscripción TPI 1 cuatrimestre 2016","Completar todas las respuestas"));
 
 		// fetch all Surveys
 		System.out.println("Surveys found with findAll():");
