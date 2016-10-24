@@ -15,27 +15,8 @@ class App extends React.Component {// creamos un componente de REACT
 	}
 
 	componentDidMount() { // que hacer al momento de haber cargado el componente,  se relaciona con el ciclo de vida del objeto DOM
-		this.loadFromServer(this.state.pageSize);
-	}
-	
-	loadFromServer(pageSize) {
-		follow(client, root, [
-			{rel: 'surveys', params: {size: pageSize}}]
-		).then(surveyCollection => {
-			return client({
-				method: 'GET',
-				path: surveyCollection.entity._links.profile.href,
-				headers: {'Accept': 'application/schema+json'}
-			}).then(schema => {
-				this.schema = schema.entity;
-				return surveyCollection;
-			});
-		}).done(surveyCollection => {
-			this.setState({
-				surveys: surveyCollection.entity._embedded.surveys,
-				attributes: Object.keys(this.schema.properties),
-				pageSize: pageSize,
-				links: surveyCollection.entity._links});
+		client({method: 'GET', path: root+'/surveys'}).then(response => {
+			this.setState({surveys: response.entity._embedded.surveys});
 		});
 	}
 
@@ -55,12 +36,13 @@ class SurveyList extends React.Component{ // definimos la estructura de una list
 			<Survey key={survey._links.self.href} survey={survey}/>
 		);
 		return (
-			<table>
+			<table className="well">
 				<tbody>
 					<tr>
 						<th>Name</th>
 						<th>Description</th>
 						<th>Help Text</th>
+						<th>Actions</th>
 					</tr>
 					{surveys}
 				</tbody>
@@ -78,6 +60,7 @@ class Survey extends React.Component{
 				<td>{this.props.survey.name}</td>
 				<td>{this.props.survey.description}</td>
 				<td>{this.props.survey.helpText}</td>
+				<td><button className="btn btn-info">View results</button></td>
 			</tr>
 		)
 	}

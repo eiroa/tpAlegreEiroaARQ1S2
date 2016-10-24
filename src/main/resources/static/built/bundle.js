@@ -112,7 +112,7 @@
 				});
 				return React.createElement(
 					'table',
-					null,
+					{ className: 'well' },
 					React.createElement(
 						'tbody',
 						null,
@@ -133,6 +133,11 @@
 								'th',
 								null,
 								'Help Text'
+							),
+							React.createElement(
+								'th',
+								null,
+								'Actions'
 							)
 						),
 						surveys
@@ -173,12 +178,107 @@
 						'td',
 						null,
 						this.props.survey.helpText
+					),
+					React.createElement(
+						'td',
+						null,
+						React.createElement(
+							'button',
+							{ className: 'btn btn-info' },
+							'View results'
+						)
 					)
 				);
 			}
 		}]);
 	
 		return Survey;
+	}(React.Component);
+	
+	var CreateDialog = function (_React$Component4) {
+		_inherits(CreateDialog, _React$Component4);
+	
+		function CreateDialog(props) {
+			_classCallCheck(this, CreateDialog);
+	
+			var _this5 = _possibleConstructorReturn(this, (CreateDialog.__proto__ || Object.getPrototypeOf(CreateDialog)).call(this, props));
+	
+			_this5.handleSubmit = _this5.handleSubmit.bind(_this5);
+			return _this5;
+		}
+	
+		_createClass(CreateDialog, [{
+			key: 'handleSubmit',
+			value: function handleSubmit(e) {
+				var _this6 = this;
+	
+				e.preventDefault();
+				var newSurvey = {};
+				this.props.attributes.forEach(function (attribute) {
+					newSurvey[attribute] = ReactDOM.findDOMNode(_this6.refs[attribute]).value.trim();
+				});
+				this.props.onCreate(newSurvey);
+	
+				// clear out the dialog's inputs
+				this.props.attributes.forEach(function (attribute) {
+					ReactDOM.findDOMNode(_this6.refs[attribute]).value = '';
+				});
+	
+				// Navigate away from the dialog to hide it.
+				window.location = "#";
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var inputs = this.props.attributes.map(function (attribute) {
+					return React.createElement(
+						'p',
+						{ key: attribute },
+						React.createElement('input', { type: 'text', placeholder: attribute, ref: attribute, className: 'field' })
+					);
+				});
+	
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(
+						'a',
+						{ href: '#createSurvey' },
+						'Create'
+					),
+					React.createElement(
+						'div',
+						{ id: 'createSurvey', className: 'modalDialog' },
+						React.createElement(
+							'div',
+							null,
+							React.createElement(
+								'a',
+								{ href: '#', title: 'Close', className: 'close' },
+								'X'
+							),
+							React.createElement(
+								'h2',
+								null,
+								'Create new Survey'
+							),
+							React.createElement(
+								'form',
+								null,
+								inputs,
+								React.createElement(
+									'button',
+									{ onClick: this.handleSubmit },
+									'Create'
+								)
+							)
+						)
+					)
+				);
+			}
+		}]);
+	
+		return CreateDialog;
 	}(React.Component);
 	
 	ReactDOM.render(React.createElement(App, null), document.getElementById('react'));
