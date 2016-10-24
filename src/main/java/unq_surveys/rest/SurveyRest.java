@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * El Bean del servicio Rest, Spring se encarga de generar el bean 
- * y exponer los servicios acordes a la definicion de cada metodo
+ * y exponer los servicios acordes a la definicion de cada metodo, se utiliza el tag @RestController
  * 
  * Se definen las rutas de los servicios con el tag @RequestMapping
  * 
- * Spring se encarga de inyectar el servicio de surveyService usando Autowired
+ * Spring se encarga de inyectar el servicio de surveyService usando @Autowired
  * 
  * @author eiroa
  *

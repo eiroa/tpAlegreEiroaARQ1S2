@@ -3,6 +3,7 @@ package unq_surveys.repositories;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import unq_surveys.domain.Survey;
@@ -16,11 +17,7 @@ import unq_surveys.domain.Survey;
  *
  */
 @Repository
-public interface SurveyRepository extends MongoRepository<Survey,String> {
-	
-
-		public Survey findByName(String name);
-		public List<Survey> findAllByName(String name);
-		
-		
+public interface SurveyRepository extends MongoRepository<Survey,String> , CrudRepository<Survey,String>  {
+	public Survey findByName(String name);
+	public List<Survey> findAllByName(String name);	
 }

@@ -15,7 +15,7 @@ import lombok.Data;
 @Data
 public class Survey {
 	
-		@Id
+		@Id 
 		private String id;
 		
 		private String name;
@@ -27,6 +27,13 @@ public class Survey {
 		public Survey(String id,String name, String description, String helpText) {
 			super();
 			this.id = id;
+			this.name = name;
+			this.description = description;
+			this.helpText = helpText;
+		}
+
+		public Survey(String name, String description, String helpText) {
+			super();
 			this.name = name;
 			this.description = description;
 			this.helpText = helpText;

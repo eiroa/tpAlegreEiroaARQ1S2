@@ -7,7 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import unq_surveys.domain.Survey;
-import unq_surveys.repositories.SurveyRepository;
 import unq_surveys.services.SurveyService;
 
 /**
@@ -38,8 +37,9 @@ public class Application implements CommandLineRunner {
 		repository.deleteAll();
 
 		// save a couple of Surveys
-		repository.save(new Survey("1q2016", "encuesta 1q 2016","Desc","help"));
-		repository.save(new Survey("2q2016","encuesta 2q 2016","Desc","help"));
+		repository.save(new Survey( "encuesta 1q 2016","Desc","help"));
+		repository.save(new Survey("encuesta 2q 2016","Desc","help"));
+		repository.save(new Survey("DARTH VADER","Desc","help"));
 
 		// fetch all Surveys
 		System.out.println("Surveys found with findAll():");
