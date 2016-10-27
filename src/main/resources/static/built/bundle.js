@@ -58,6 +58,8 @@
 	var ReactDOM = __webpack_require__(34);
 	var client = __webpack_require__(172);
 	var root = '/api';
+	var follow = __webpack_require__(201); // function to hop multiple links by "rel"
+	
 	
 	var App = function (_React$Component) {
 		_inherits(App, _React$Component);
@@ -69,24 +71,104 @@
 	
 			var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-			_this.state = { surveys: [] };
+			_this.state = { surveys: [], attributes: [], pageSize: 2, links: {} };
+			_this.updatePageSize = _this.updatePageSize.bind(_this);
+			_this.onCreate = _this.onCreate.bind(_this);
+			_this.onDelete = _this.onDelete.bind(_this);
+			_this.onNavigate = _this.onNavigate.bind(_this);
 			return _this;
 		}
 	
 		_createClass(App, [{
-			key: 'componentDidMount',
-			value: function componentDidMount() {
+			key: 'loadFromServer',
+			value: function loadFromServer(pageSize) {
 				var _this2 = this;
 	
-				// que hacer al momento de haber cargado el componente,  se relaciona con el ciclo de vida del objeto DOM
-				client({ method: 'GET', path: root + '/surveys' }).then(function (response) {
-					_this2.setState({ surveys: response.entity._embedded.surveys });
+				follow(client, root, [{ rel: 'surveys', params: { size: pageSize } }]).then(function (surveyCollection) {
+					return client({
+						method: 'GET',
+						path: surveyCollection.entity._links.profile.href,
+						headers: { 'Accept': 'application/schema+json' }
+					}).then(function (schema) {
+						_this2.schema = schema.entity;
+						return surveyCollection;
+					});
+				}).then(function (surveyCollection) {
+					_this2.setState({
+						surveys: surveyCollection.entity._embedded.surveys,
+						attributes: Object.keys(_this2.schema.properties),
+						pageSize: pageSize,
+						links: surveyCollection.entity._links });
 				});
+			}
+		}, {
+			key: 'onCreate',
+			value: function onCreate(newSurvey) {
+				var _this3 = this;
+	
+				follow(client, root, ['surveys']).then(function (surveyCollection) {
+					return client({
+						method: 'POST',
+						path: surveyCollection.entity._links.self.href,
+						entity: newSurvey,
+						headers: { 'Content-Type': 'application/json' }
+					});
+				}).then(function (response) {
+					return follow(client, root, [{ rel: 'surveys', params: { 'size': _this3.state.pageSize } }]);
+				}).then(function (response) {
+					_this3.onNavigate(response.entity._links.self.href);
+				});
+			}
+		}, {
+			key: 'onDelete',
+			value: function onDelete(survey) {
+				var _this4 = this;
+	
+				client({ method: 'DELETE', path: survey._links.self.href }).then(function (response) {
+					_this4.loadFromServer(_this4.state.pageSize);
+				});
+			}
+		}, {
+			key: 'updatePageSize',
+			value: function updatePageSize(pageSize) {
+				if (pageSize !== this.state.pageSize) {
+					this.loadFromServer(pageSize);
+				}
+			}
+		}, {
+			key: 'onNavigate',
+			value: function onNavigate(navUri) {
+				var _this5 = this;
+	
+				client({ method: 'GET', path: navUri }).then(function (surveyCollection) {
+					_this5.setState({
+						surveys: surveyCollection.entity._embedded.surveys,
+						attributes: _this5.state.attributes,
+						pageSize: _this5.state.pageSize,
+						links: surveyCollection.entity._links
+					});
+				});
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				// que hacer al momento de haber cargado el componente,  se relaciona con el ciclo de vida del objeto DOM
+				this.loadFromServer(this.state.pageSize);
 			}
 		}, {
 			key: 'render',
 			value: function render() {
-				return React.createElement(SurveyList, { surveys: this.state.surveys });
+				return React.createElement(
+					'div',
+					null,
+					React.createElement(CreateDialog, { attributes: this.state.attributes, onCreate: this.onCreate }),
+					React.createElement(SurveyList, { surveys: this.state.surveys,
+						links: this.state.links,
+						pageSize: this.state.pageSize,
+						onNavigate: this.onNavigate,
+						onDelete: this.onDelete,
+						updatePageSize: this.updatePageSize })
+				);
 			}
 		}]);
 	
@@ -96,51 +178,146 @@
 	var SurveyList = function (_React$Component2) {
 		_inherits(SurveyList, _React$Component2);
 	
-		function SurveyList() {
+		// definimos la estructura de una lista de encuestas
+	
+		function SurveyList(props) {
 			_classCallCheck(this, SurveyList);
 	
-			return _possibleConstructorReturn(this, (SurveyList.__proto__ || Object.getPrototypeOf(SurveyList)).apply(this, arguments));
+			var _this6 = _possibleConstructorReturn(this, (SurveyList.__proto__ || Object.getPrototypeOf(SurveyList)).call(this, props));
+	
+			_this6.handleNavFirst = _this6.handleNavFirst.bind(_this6);
+			_this6.handleNavPrev = _this6.handleNavPrev.bind(_this6);
+			_this6.handleNavNext = _this6.handleNavNext.bind(_this6);
+			_this6.handleNavLast = _this6.handleNavLast.bind(_this6);
+			_this6.handleInput = _this6.handleInput.bind(_this6);
+			return _this6;
 		}
 	
+		// tag::handle-page-size-updates[]
+	
+	
 		_createClass(SurveyList, [{
+			key: 'handleInput',
+			value: function handleInput(e) {
+				e.preventDefault();
+				var pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
+				if (/^[0-9]+$/.test(pageSize)) {
+					this.props.updatePageSize(pageSize);
+				} else {
+					ReactDOM.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
+				}
+			}
+			// end::handle-page-size-updates[]
+	
+			// tag::handle-nav[]
+	
+		}, {
+			key: 'handleNavFirst',
+			value: function handleNavFirst(e) {
+				e.preventDefault();
+				this.props.onNavigate(this.props.links.first.href);
+			}
+		}, {
+			key: 'handleNavPrev',
+			value: function handleNavPrev(e) {
+				e.preventDefault();
+				this.props.onNavigate(this.props.links.prev.href);
+			}
+		}, {
+			key: 'handleNavNext',
+			value: function handleNavNext(e) {
+				e.preventDefault();
+				this.props.onNavigate(this.props.links.next.href);
+			}
+		}, {
+			key: 'handleNavLast',
+			value: function handleNavLast(e) {
+				e.preventDefault();
+				this.props.onNavigate(this.props.links.last.href);
+			}
+			// end::handle-nav[]
+	
+		}, {
 			key: 'render',
-			// definimos la estructura de una lista de encuestas
 			value: function render() {
-				// utilizando la funcion map, mapeamos cada elemento encuesta de la lista con el template que definimos luego 
+				var _this7 = this;
+	
 				var surveys = this.props.surveys.map(function (survey) {
-					return React.createElement(Survey, { key: survey._links.self.href, survey: survey });
+					return React.createElement(Survey, { key: survey._links.self.href, survey: survey, onDelete: _this7.props.onDelete });
 				});
+	
+				var navLinks = [];
+				if ("first" in this.props.links) {
+					navLinks.push(React.createElement(
+						'button',
+						{ key: 'first', onClick: this.handleNavFirst },
+						'<<'
+					));
+				}
+				if ("prev" in this.props.links) {
+					navLinks.push(React.createElement(
+						'button',
+						{ key: 'prev', onClick: this.handleNavPrev },
+						'<'
+					));
+				}
+				if ("next" in this.props.links) {
+					navLinks.push(React.createElement(
+						'button',
+						{ key: 'next', onClick: this.handleNavNext },
+						'>'
+					));
+				}
+				if ("last" in this.props.links) {
+					navLinks.push(React.createElement(
+						'button',
+						{ key: 'last', onClick: this.handleNavLast },
+						'>>'
+					));
+				}
+	
 				return React.createElement(
-					'table',
-					{ className: 'well' },
+					'div',
+					null,
+					React.createElement('input', { ref: 'pageSize', defaultValue: this.props.pageSize, onInput: this.handleInput }),
 					React.createElement(
-						'tbody',
+						'table',
 						null,
 						React.createElement(
-							'tr',
+							'tbody',
 							null,
 							React.createElement(
-								'th',
+								'tr',
 								null,
-								'Name'
+								React.createElement(
+									'th',
+									null,
+									'First Name'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Last Name'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Description'
+								),
+								React.createElement(
+									'th',
+									null,
+									'Actions'
+								),
+								React.createElement('th', null)
 							),
-							React.createElement(
-								'th',
-								null,
-								'Description'
-							),
-							React.createElement(
-								'th',
-								null,
-								'Help Text'
-							),
-							React.createElement(
-								'th',
-								null,
-								'Actions'
-							)
-						),
-						surveys
+							surveys
+						)
+					),
+					React.createElement(
+						'div',
+						null,
+						navLinks
 					)
 				);
 			}
@@ -152,13 +329,21 @@
 	var Survey = function (_React$Component3) {
 		_inherits(Survey, _React$Component3);
 	
-		function Survey() {
+		function Survey(props) {
 			_classCallCheck(this, Survey);
 	
-			return _possibleConstructorReturn(this, (Survey.__proto__ || Object.getPrototypeOf(Survey)).apply(this, arguments));
+			var _this8 = _possibleConstructorReturn(this, (Survey.__proto__ || Object.getPrototypeOf(Survey)).call(this, props));
+	
+			_this8.handleDelete = _this8.handleDelete.bind(_this8);
+			return _this8;
 		}
 	
 		_createClass(Survey, [{
+			key: 'handleDelete',
+			value: function handleDelete() {
+				this.props.onDelete(this.props.survey);
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return React.createElement(
@@ -184,8 +369,8 @@
 						null,
 						React.createElement(
 							'button',
-							{ className: 'btn btn-info' },
-							'View results'
+							{ onClick: this.handleDelete, className: 'btn btn-danger' },
+							'Delete'
 						)
 					)
 				);
@@ -201,27 +386,27 @@
 		function CreateDialog(props) {
 			_classCallCheck(this, CreateDialog);
 	
-			var _this5 = _possibleConstructorReturn(this, (CreateDialog.__proto__ || Object.getPrototypeOf(CreateDialog)).call(this, props));
+			var _this9 = _possibleConstructorReturn(this, (CreateDialog.__proto__ || Object.getPrototypeOf(CreateDialog)).call(this, props));
 	
-			_this5.handleSubmit = _this5.handleSubmit.bind(_this5);
-			return _this5;
+			_this9.handleSubmit = _this9.handleSubmit.bind(_this9);
+			return _this9;
 		}
 	
 		_createClass(CreateDialog, [{
 			key: 'handleSubmit',
 			value: function handleSubmit(e) {
-				var _this6 = this;
+				var _this10 = this;
 	
 				e.preventDefault();
 				var newSurvey = {};
 				this.props.attributes.forEach(function (attribute) {
-					newSurvey[attribute] = ReactDOM.findDOMNode(_this6.refs[attribute]).value.trim();
+					newSurvey[attribute] = ReactDOM.findDOMNode(_this10.refs[attribute]).value.trim();
 				});
 				this.props.onCreate(newSurvey);
 	
 				// clear out the dialog's inputs
 				this.props.attributes.forEach(function (attribute) {
-					ReactDOM.findDOMNode(_this6.refs[attribute]).value = '';
+					ReactDOM.findDOMNode(_this10.refs[attribute]).value = '';
 				});
 	
 				// Navigate away from the dialog to hide it.
@@ -24008,6 +24193,53 @@
 			}
 		};
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 201 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = function follow(api, rootPath, relArray) {
+		var root = api({
+			method: 'GET',
+			path: rootPath
+		});
+	
+		return relArray.reduce(function (root, arrayItem) {
+			var rel = typeof arrayItem === 'string' ? arrayItem : arrayItem.rel;
+			return traverseNext(root, rel, arrayItem);
+		}, root);
+	
+		function traverseNext(root, rel, arrayItem) {
+			return root.then(function (response) {
+				if (hasEmbeddedRel(response.entity, rel)) {
+					return response.entity._embedded[rel];
+				}
+	
+				if (!response.entity._links) {
+					return [];
+				}
+	
+				if (typeof arrayItem === 'string') {
+					return api({
+						method: 'GET',
+						path: response.entity._links[rel].href
+					});
+				} else {
+					return api({
+						method: 'GET',
+						path: response.entity._links[rel].href,
+						params: arrayItem.params
+					});
+				}
+			});
+		}
+	
+		function hasEmbeddedRel(entity, rel) {
+			return entity._embedded && entity._embedded.hasOwnProperty(rel);
+		}
+	};
 
 /***/ }
 /******/ ]);
