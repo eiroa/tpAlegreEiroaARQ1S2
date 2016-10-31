@@ -1,6 +1,11 @@
 package unq_surveys.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 /**
@@ -12,6 +17,7 @@ import lombok.Data;
  * @author eiroa
  *
  */
+@Document
 @Data
 public class Survey {
 	
@@ -21,6 +27,9 @@ public class Survey {
 		private String name;
 		private String description;
 		private String helpText;
+		
+		//Version permite incrementar la versión del objeto y asegura un optimistic lock
+		private @Version @JsonIgnore Long version;
 		
 		public Survey(){};
 		

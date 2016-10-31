@@ -65,3 +65,5 @@ local.properties
 .recommenders/
 /.gradle/
 /build/
+node_modules/
+
