@@ -1,0 +1,42 @@
+{
+  "name": "spring-data-rest-and-reactjs",
+  "version": "1.0.0",
+  "description": "Tp arquitectura software 1",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:equipoAlegreEiroaARQ1S2/tpAlegreEiroaARQ1S2.git"
+  },
+  "keywords": [
+    "rest",
+    "hateoas",
+    "spring",
+    "data",
+    "react"
+  ],
+  "author": "Eiroa, Mauro",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "babel-core": "^6.13.2",
+    "babel-loader": "^6.2.7",
+	"babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "rest": "^1.3.1",
+    "webpack": "^1.12.2"
+  },
+"babel": {
+    "comments": false,
+    "presets": [
+      [
+        "es2015",
+        {
+          "loose": true
+        }
+      ]
+    ]
+  },
+  "scripts": {
+    "watch": "webpack --watch -d"
+  }
+}

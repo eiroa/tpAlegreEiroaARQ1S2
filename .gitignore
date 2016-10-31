@@ -63,3 +63,7 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+/.gradle/
+/build/
+node_modules/
+
