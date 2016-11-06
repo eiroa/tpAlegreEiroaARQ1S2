@@ -799,6 +799,9 @@
 	        _this16.handleNameChange = _this16.handleNameChange.bind(_this16);
 	        _this16.handleDescriptionChange = _this16.handleDescriptionChange.bind(_this16);
 	        _this16.handleHelpChange = _this16.handleHelpChange.bind(_this16);
+	        _this16.handleSurveyNameChange = _this16.handleSurveyNameChange.bind(_this16);
+	        _this16.handleSurveyDescriptionChange = _this16.handleSurveyDescriptionChange.bind(_this16);
+	        _this16.handleSurveyHelpChange = _this16.handleSurveyHelpChange.bind(_this16);
 	        return _this16;
 	    }
 	
@@ -806,7 +809,6 @@
 	        key: 'handleNameChange',
 	        value: function handleNameChange(e) {
 	            this.setState({ questionName: e.target.value });
-	            alert("le");
 	        }
 	    }, {
 	        key: 'handleDescriptionChange',
@@ -822,7 +824,6 @@
 	        key: 'handleSurveyNameChange',
 	        value: function handleSurveyNameChange(e) {
 	            this.setState({ surveyName: e.target.value });
-	            alert("le");
 	        }
 	    }, {
 	        key: 'handleSurveyDescriptionChange',
@@ -919,7 +920,7 @@
 	                            cols: '35',
 	                            wrap: 'soft',
 	                            name: 'surveyHelp',
-	                            onChange: this.handleSurveyDescriptionChange,
+	                            onChange: this.handleSurveyHelpChange,
 	                            placeholder: 'Help' })
 	                    ),
 	                    React.createElement(

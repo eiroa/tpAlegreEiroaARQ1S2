@@ -487,11 +487,13 @@ class CreateSurvey extends React.Component {
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleHelpChange = this.handleHelpChange.bind(this);
+        this.handleSurveyNameChange = this.handleSurveyNameChange.bind(this);
+        this.handleSurveyDescriptionChange = this.handleSurveyDescriptionChange.bind(this);
+        this.handleSurveyHelpChange = this.handleSurveyHelpChange.bind(this);
     }
     
     handleNameChange(e){
         this.setState({questionName: e.target.value});
-        alert("le");
      }
     
     handleDescriptionChange(e){
@@ -504,7 +506,6 @@ class CreateSurvey extends React.Component {
     
     handleSurveyNameChange(e){
         this.setState({surveyName: e.target.value});
-        alert("le");
      }
     
     handleSurveyDescriptionChange(e){
@@ -584,7 +585,7 @@ class CreateSurvey extends React.Component {
                         cols="35"
                         wrap="soft"
                         name="surveyHelp" 
-                            onChange={this.handleSurveyDescriptionChange}
+                            onChange={this.handleSurveyHelpChange}
                         placeholder="Help"></textarea>
 
                 </div>
