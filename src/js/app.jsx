@@ -41,7 +41,7 @@ class App extends React.Component {// creamos un componente de REACT
         ).then( surveyCollection => {
             return client( {
                 method: 'GET',
-                path: surveyCollection.entity._links.profile.href,
+                path: surveyCollection.entity._links.profile.href, //."entity"  entity hace referencia a la respuesta recibida por el servidor en este caso entity._links seria lo mismo que response._links, Atenti, surveyCollection representa la coleccion de surveys y no el response, el objeto entity es puesto por la funcion follow a surveyCollection
                 headers: { 'Accept': 'application/schema+json' }
             }).then( schema => {
                 this.schema = schema.entity;
@@ -473,37 +473,77 @@ class TestQuestion extends React.Component {
 }
 
                                 
-class Example extends React.Component {
-    constructor(props){
-      super(props);
-    }
 
-    render() {
-
-      return (
-        <div>
-          <section>
-            <h1>React SkyLight</h1>
-            <button onClick={() => this.refs.simpleDialog.show()}>Open Modal</button>
-          </section>
-          <SkyLight hideOnOverlayClicked ref="simpleDialog" title="Hi, I'm a simple modal">
-            Hello, I dont have any callback.
-          </SkyLight>
-        </div>
-      )
-    }
-}
 
 class CreateSurvey extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
                 showCreateQuestionDialog: false
               };
         this.handleClickCreateQuestion = this.handleClickCreateQuestion.bind(this);
+        this.onCreate = this.onCreate.bind(this);
+        this.createSurvey = this.createSurvey.bind(this);
+        this.handleNameChange = this.handleNameChange.bind(this);
+        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
+        this.handleHelpChange = this.handleHelpChange.bind(this);
     }
     
-   
+    handleNameChange(e){
+        this.setState({questionName: e.target.value});
+        alert("le");
+     }
+    
+    handleDescriptionChange(e){
+        this.setState({questionDescription: e.target.value});
+     }
+    
+    handleHelpChange(e){
+        this.setState({questionHelp: e.target.value});
+     }
+    
+    handleSurveyNameChange(e){
+        this.setState({surveyName: e.target.value});
+        alert("le");
+     }
+    
+    handleSurveyDescriptionChange(e){
+        this.setState({surveyDescription: e.target.value});
+     }
+    
+    handleSurveyHelpChange(e){
+        this.setState({surveyHelp: e.target.value});
+     }
+    
+    onCreate( newSurvey ) {
+        follow( client, root, ['surveys'] ).then( surveyCollection => {
+            return client( {
+                method: 'POST',
+                path: surveyCollection.entity._links.self.href,
+                entity: newSurvey,
+                headers: { 'Content-Type': 'application/json' }
+            })
+        }).then( response => {
+            return follow( client, root, [
+                { rel: 'surveys', params: { 'size': 2} }] );
+        });
+    }
+    
+    createSurvey(e){
+        e.preventDefault();
+        var newSurvey = {};
+        newSurvey.name = this.state.surveyName;
+        newSurvey.description = this.state.surveyDescription;
+        newSurvey.helpText = this.state.surveyHelp;
+        
+        console.log(newSurvey);
+        console.log("win?");
+        this.onCreate( newSurvey );
+
+
+        // Navigate away from the dialog to hide it.
+        window.location = "#";
+    }
     
     handleClickCreateQuestion() {
         this.setState({
@@ -523,14 +563,18 @@ class CreateSurvey extends React.Component {
                         <input type="text"
                             className="form-control"
                             placeholder="Title"
-                            required></input>
+                            name="surveyName"
+                                onChange={this.handleSurveyNameChange}
+                                required></input>
                     </div>
                     <div className="form-group">
                         <textarea form ="formi"
                             className="form-control"
                             cols="35"
                             wrap="soft"
-                            placeholder="Description"></textarea>
+                            name="surveyDescription"
+                                onChange={this.handleSurveyDescriptionChange}
+                                placeholder="Description"></textarea>
 
                     </div>
                     
@@ -539,12 +583,11 @@ class CreateSurvey extends React.Component {
                         className="form-control"
                         cols="35"
                         wrap="soft"
+                        name="surveyHelp" 
+                            onChange={this.handleSurveyDescriptionChange}
                         placeholder="Help"></textarea>
 
                 </div>
-
-
-
 
                     <div className="form-group well">
                         <form className="form-inline" role="form" style={{ padding: '10px' }} name="urlForm">
@@ -553,8 +596,56 @@ class CreateSurvey extends React.Component {
                                 className="btn btn-info pull-right" >
                                     Add question 
                                 </button>
-                                    <SkyLight hideOnOverlayClicked ref="simpleDialog" title="Hi, I'm a simple modal">
-                                    Hello, I dont have any callback.
+                                    
+                                    <SkyLight hideOnOverlayClicked 
+                                    ref="simpleDialog" 
+                                        title="Create a new Text Question">
+                                   <div  className="panel panel-primary" id="panelNewQuestion">
+                                    <div className="panel-body" id="questionForm" style={{ marginTop: '10px' }}>
+
+
+                                    <div className="form-inline" style={{padding:'10px'}}>
+                                        <input type="text"
+                                            className="form-control"
+                                            placeholder="QuestionText"
+                                            name="questionName"
+                                            onChange={this.handleNameChange}
+                                            required></input>
+                                    </div>
+                                    <div className="form-group" style={{padding:'10px'}}>
+                                        <textarea form ="formi"
+                                            className="form-control"
+                                            cols="35"
+                                            wrap="soft"
+                                            placeholder="Description"
+                                                name="questionDescription"
+                                                onChange={this.handleDescriptionChange}
+                                            required></textarea>
+
+                                    </div>
+                                    
+                                    <div className="form-group" style={{padding:'10px'}}>
+                                    <textarea form ="formi"
+                                        className="form-control"
+                                        cols="35"
+                                        wrap="soft"
+                                        name="questionHelp"
+                                            onChange={this.handleHelpChange}
+                                        placeholder="HelpText"></textarea>
+                                        
+                                        <div className="form-inline" style={{marginTop:'20px'}}>
+                                        <button 
+                                        onClick={this.createQuestion}
+                                        className="btn btn-success" 
+                                            style={{padding:'10px'}}
+                                        > Create</button>
+                                    </div>  
+                                    
+
+                                   </div>
+                                </div>
+                               </div>
+
                                   </SkyLight>
                                 </div>
 
@@ -569,25 +660,13 @@ class CreateSurvey extends React.Component {
                         
                         
                     </div>
-                    <button className='btn btn-success'> Create</button>
+                    <button onClick={this.createSurvey} className='btn btn-success'> Create</button>
                 </div>
             </div>
         )
     }
 }
                                         
-class NewComponent extends React.Component {
-    render() {
-      return (
-        <div {...this.props}>
-        <SkyLight hideOnOverlayClicked ref="simpleDialog" title="Hi, I'm a simple modal">
-        
-        Hello, I dont have any callback.
-        </SkyLight>
-        </div>
-      );
-    }  
-  }
 
 
 ReactDOM.render(

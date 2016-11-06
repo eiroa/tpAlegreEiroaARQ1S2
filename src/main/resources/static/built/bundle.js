@@ -782,67 +782,88 @@
 	    return TestQuestion;
 	}(React.Component);
 	
-	var Example = function (_React$Component7) {
-	    _inherits(Example, _React$Component7);
+	var CreateSurvey = function (_React$Component7) {
+	    _inherits(CreateSurvey, _React$Component7);
 	
-	    function Example(props) {
-	        _classCallCheck(this, Example);
-	
-	        return _possibleConstructorReturn(this, (Example.__proto__ || Object.getPrototypeOf(Example)).call(this, props));
-	    }
-	
-	    _createClass(Example, [{
-	        key: 'render',
-	        value: function render() {
-	            var _this17 = this;
-	
-	            return React.createElement(
-	                'div',
-	                null,
-	                React.createElement(
-	                    'section',
-	                    null,
-	                    React.createElement(
-	                        'h1',
-	                        null,
-	                        'React SkyLight'
-	                    ),
-	                    React.createElement(
-	                        'button',
-	                        { onClick: function onClick() {
-	                                return _this17.refs.simpleDialog.show();
-	                            } },
-	                        'Open Modal'
-	                    )
-	                ),
-	                React.createElement(
-	                    _reactSkylight2.default,
-	                    { hideOnOverlayClicked: true, ref: 'simpleDialog', title: 'Hi, I\'m a simple modal' },
-	                    'Hello, I dont have any callback.'
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return Example;
-	}(React.Component);
-	
-	var CreateSurvey = function (_React$Component8) {
-	    _inherits(CreateSurvey, _React$Component8);
-	
-	    function CreateSurvey() {
+	    function CreateSurvey(props) {
 	        _classCallCheck(this, CreateSurvey);
 	
-	        var _this18 = _possibleConstructorReturn(this, (CreateSurvey.__proto__ || Object.getPrototypeOf(CreateSurvey)).call(this));
+	        var _this16 = _possibleConstructorReturn(this, (CreateSurvey.__proto__ || Object.getPrototypeOf(CreateSurvey)).call(this, props));
 	
-	        _this18.state = {
+	        _this16.state = {
 	            showCreateQuestionDialog: false
 	        };
-	        _this18.handleClickCreateQuestion = _this18.handleClickCreateQuestion.bind(_this18);
-	        return _this18;
+	        _this16.handleClickCreateQuestion = _this16.handleClickCreateQuestion.bind(_this16);
+	        _this16.onCreate = _this16.onCreate.bind(_this16);
+	        _this16.createSurvey = _this16.createSurvey.bind(_this16);
+	        _this16.handleNameChange = _this16.handleNameChange.bind(_this16);
+	        _this16.handleDescriptionChange = _this16.handleDescriptionChange.bind(_this16);
+	        _this16.handleHelpChange = _this16.handleHelpChange.bind(_this16);
+	        return _this16;
 	    }
 	
 	    _createClass(CreateSurvey, [{
+	        key: 'handleNameChange',
+	        value: function handleNameChange(e) {
+	            this.setState({ questionName: e.target.value });
+	            alert("le");
+	        }
+	    }, {
+	        key: 'handleDescriptionChange',
+	        value: function handleDescriptionChange(e) {
+	            this.setState({ questionDescription: e.target.value });
+	        }
+	    }, {
+	        key: 'handleHelpChange',
+	        value: function handleHelpChange(e) {
+	            this.setState({ questionHelp: e.target.value });
+	        }
+	    }, {
+	        key: 'handleSurveyNameChange',
+	        value: function handleSurveyNameChange(e) {
+	            this.setState({ surveyName: e.target.value });
+	            alert("le");
+	        }
+	    }, {
+	        key: 'handleSurveyDescriptionChange',
+	        value: function handleSurveyDescriptionChange(e) {
+	            this.setState({ surveyDescription: e.target.value });
+	        }
+	    }, {
+	        key: 'handleSurveyHelpChange',
+	        value: function handleSurveyHelpChange(e) {
+	            this.setState({ surveyHelp: e.target.value });
+	        }
+	    }, {
+	        key: 'onCreate',
+	        value: function onCreate(newSurvey) {
+	            follow(client, root, ['surveys']).then(function (surveyCollection) {
+	                return client({
+	                    method: 'POST',
+	                    path: surveyCollection.entity._links.self.href,
+	                    entity: newSurvey,
+	                    headers: { 'Content-Type': 'application/json' }
+	                });
+	            }).then(function (response) {
+	                return follow(client, root, [{ rel: 'surveys', params: { 'size': 2 } }]);
+	            });
+	        }
+	    }, {
+	        key: 'createSurvey',
+	        value: function createSurvey(e) {
+	            e.preventDefault();
+	            var newSurvey = {};
+	            newSurvey.name = this.state.surveyName;
+	            newSurvey.description = this.state.surveyDescription;
+	            newSurvey.helpText = this.state.surveyHelp;
+	
+	            console.log(newSurvey);
+	            console.log("win?");
+	            this.onCreate(newSurvey);
+	
+	            window.location = "#";
+	        }
+	    }, {
 	        key: 'handleClickCreateQuestion',
 	        value: function handleClickCreateQuestion() {
 	            this.setState({
@@ -852,7 +873,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this19 = this;
+	            var _this17 = this;
 	
 	            return React.createElement(
 	                'div',
@@ -875,6 +896,8 @@
 	                        React.createElement('input', { type: 'text',
 	                            className: 'form-control',
 	                            placeholder: 'Title',
+	                            name: 'surveyName',
+	                            onChange: this.handleSurveyNameChange,
 	                            required: true })
 	                    ),
 	                    React.createElement(
@@ -884,6 +907,8 @@
 	                            className: 'form-control',
 	                            cols: '35',
 	                            wrap: 'soft',
+	                            name: 'surveyDescription',
+	                            onChange: this.handleSurveyDescriptionChange,
 	                            placeholder: 'Description' })
 	                    ),
 	                    React.createElement(
@@ -893,6 +918,8 @@
 	                            className: 'form-control',
 	                            cols: '35',
 	                            wrap: 'soft',
+	                            name: 'surveyHelp',
+	                            onChange: this.handleSurveyDescriptionChange,
 	                            placeholder: 'Help' })
 	                    ),
 	                    React.createElement(
@@ -907,15 +934,70 @@
 	                                React.createElement(
 	                                    'button',
 	                                    { onClick: function onClick() {
-	                                            return _this19.refs.simpleDialog.show();
+	                                            return _this17.refs.simpleDialog.show();
 	                                        },
 	                                        className: 'btn btn-info pull-right' },
 	                                    'Add question'
 	                                ),
 	                                React.createElement(
 	                                    _reactSkylight2.default,
-	                                    { hideOnOverlayClicked: true, ref: 'simpleDialog', title: 'Hi, I\'m a simple modal' },
-	                                    'Hello, I dont have any callback.'
+	                                    { hideOnOverlayClicked: true,
+	                                        ref: 'simpleDialog',
+	                                        title: 'Create a new Text Question' },
+	                                    React.createElement(
+	                                        'div',
+	                                        { className: 'panel panel-primary', id: 'panelNewQuestion' },
+	                                        React.createElement(
+	                                            'div',
+	                                            { className: 'panel-body', id: 'questionForm', style: { marginTop: '10px' } },
+	                                            React.createElement(
+	                                                'div',
+	                                                { className: 'form-inline', style: { padding: '10px' } },
+	                                                React.createElement('input', { type: 'text',
+	                                                    className: 'form-control',
+	                                                    placeholder: 'QuestionText',
+	                                                    name: 'questionName',
+	                                                    onChange: this.handleNameChange,
+	                                                    required: true })
+	                                            ),
+	                                            React.createElement(
+	                                                'div',
+	                                                { className: 'form-group', style: { padding: '10px' } },
+	                                                React.createElement('textarea', { form: 'formi',
+	                                                    className: 'form-control',
+	                                                    cols: '35',
+	                                                    wrap: 'soft',
+	                                                    placeholder: 'Description',
+	                                                    name: 'questionDescription',
+	                                                    onChange: this.handleDescriptionChange,
+	                                                    required: true })
+	                                            ),
+	                                            React.createElement(
+	                                                'div',
+	                                                { className: 'form-group', style: { padding: '10px' } },
+	                                                React.createElement('textarea', { form: 'formi',
+	                                                    className: 'form-control',
+	                                                    cols: '35',
+	                                                    wrap: 'soft',
+	                                                    name: 'questionHelp',
+	                                                    onChange: this.handleHelpChange,
+	                                                    placeholder: 'HelpText' }),
+	                                                React.createElement(
+	                                                    'div',
+	                                                    { className: 'form-inline', style: { marginTop: '20px' } },
+	                                                    React.createElement(
+	                                                        'button',
+	                                                        {
+	                                                            onClick: this.createQuestion,
+	                                                            className: 'btn btn-success',
+	                                                            style: { padding: '10px' }
+	                                                        },
+	                                                        ' Create'
+	                                                    )
+	                                                )
+	                                            )
+	                                        )
+	                                    )
 	                                )
 	                            )
 	                        ),
@@ -932,7 +1014,7 @@
 	                    ),
 	                    React.createElement(
 	                        'button',
-	                        { className: 'btn btn-success' },
+	                        { onClick: this.createSurvey, className: 'btn btn-success' },
 	                        ' Create'
 	                    )
 	                )
@@ -941,33 +1023,6 @@
 	    }]);
 	
 	    return CreateSurvey;
-	}(React.Component);
-	
-	var NewComponent = function (_React$Component9) {
-	    _inherits(NewComponent, _React$Component9);
-	
-	    function NewComponent() {
-	        _classCallCheck(this, NewComponent);
-	
-	        return _possibleConstructorReturn(this, (NewComponent.__proto__ || Object.getPrototypeOf(NewComponent)).apply(this, arguments));
-	    }
-	
-	    _createClass(NewComponent, [{
-	        key: 'render',
-	        value: function render() {
-	            return React.createElement(
-	                'div',
-	                this.props,
-	                React.createElement(
-	                    _reactSkylight2.default,
-	                    { hideOnOverlayClicked: true, ref: 'simpleDialog', title: 'Hi, I\'m a simple modal' },
-	                    'Hello, I dont have any callback.'
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return NewComponent;
 	}(React.Component);
 	
 	ReactDOM.render(React.createElement(
