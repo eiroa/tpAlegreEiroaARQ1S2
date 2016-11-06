@@ -1,5 +1,7 @@
 package unq_surveys.domain;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -31,6 +33,8 @@ public class Survey {
 		//Version permite incrementar la versión del objeto y asegura un optimistic lock
 		private @Version @JsonIgnore Long version;
 		
+		private List<Question> questions;
+		
 		public Survey(){};
 		
 		public Survey(String id,String name, String description, String helpText) {
@@ -46,6 +50,14 @@ public class Survey {
 			this.name = name;
 			this.description = description;
 			this.helpText = helpText;
+		}
+		
+		public Survey(String name, String description, String helpText,List<Question> questions) {
+			super();
+			this.name = name;
+			this.description = description;
+			this.helpText = helpText;
+			this.questions = questions;
 		}
 		
 		

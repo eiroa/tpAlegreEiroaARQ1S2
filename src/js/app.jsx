@@ -7,10 +7,11 @@ const client = require( './client' );
 const root = '/api';
 const follow = require( './follow' );// function to hop multiple links by "rel"
 
-// existen dos sintaxis para importar, el formato clasico impuesto por Node,  con require,
+// existen dos sintaxis para importar, el formato clasico ES5 impuesto por Node,  con require,
 // y el formato moderno que propone React utilizando la especificacion ES6, import
 // Se usan ambos solo a fines demostrativos
 import { Router, Route, hashHistory } from 'react-router';
+import SkyLight from 'react-skylight';
 //IMPORTANTE:
 
 /*
@@ -236,10 +237,11 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
                 <table>
                     <tbody>
                         <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
+                            <th>Title</th>
                             <th>Description</th>
+                            <th>Help Text</th>
                             <th>Actions</th>
+                            <th></th>
                             <th></th>
                         </tr>
                         {surveys}
@@ -283,7 +285,7 @@ class Survey extends React.Component {
                         onUpdate={this.props.onUpdate}/>
                 </td>
                 <td><button onClick={this.handleDelete} className="btn btn-danger">Delete</button></td>
-                
+
                 <td><a href="#AnswerSurvey"><button className="btn btn-success">Answer Survey</button></a></td>
             </tr>
         )
@@ -430,53 +432,171 @@ class TestQuestion extends React.Component {
                                 <hr />
                                 Bootstrap ( 60% ):
                                 <div className="progress progress-striped active">
-                                    <div className="progress-bar progress-bar-danger" 
-                                    		role="progressbar" aria-valuenow="60" 
-                                    				aria-valuemin="0" aria-valuemax="100" style={{width:'60%'}}>
+                                    <div className="progress-bar progress-bar-danger"
+                                        role="progressbar" aria-valuenow="60"
+                                    				aria-valuemin="0" aria-valuemax="100" style={{ width: '60%' }}>
                                         <span className="sr-only">60% Complete ( success ) </span>
                                     </div>
                                 </div>
                                 Foundation ( 30% ):
                                 <div className="progress progress-striped active">
-                                    <div className="progress-bar progress-bar-warning" 
-                                        role="progressbar" aria-valuenow="30" 
-                                            aria-valuemin="0" aria-valuemax="100" style={{width:'30%'}} >
+                                    <div className="progress-bar progress-bar-warning"
+                                        role="progressbar" aria-valuenow="30"
+                                        aria-valuemin="0" aria-valuemax="100" style={{ width: '30%' }} >
                                         <span className="sr-only">30% Complete ( success ) </span>
                                     </div>
                                 </div>
                                 Kube ( 10% ):
                                 <div className="progress progress-striped active">
-                                    <div className="progress-bar progress-bar-success" 
-                                        role="progressbar" aria-valuenow="10" 
-                                            aria-valuemin="0" aria-valuemax="100" 
-                                                style={{width:'10%'}} >
+                                    <div className="progress-bar progress-bar-success"
+                                        role="progressbar" aria-valuenow="10"
+                                        aria-valuemin="0" aria-valuemax="100"
+                                        style={{ width: '10%' }} >
                                         <span className="sr-only">10% Complete ( success ) </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="panel-footer">
+                            <div className="panel-footer">
                                 <a href="#" className="btn btn-success btn-sm">
-                                <span className="glyphicon glyphicon-bell"></span> Mark Your Vote</a>
+                                    <span className="glyphicon glyphicon-bell"></span> Mark Your Vote</a>
                             </div>
                         </div>
 
                     </div>
 
                 </div>
-              </div>
-             )
-                }
+            </div>
+        )
+    }
 
 
-                }
+}
+
+                                
+class Example extends React.Component {
+    constructor(props){
+      super(props);
+    }
+
+    render() {
+
+      return (
+        <div>
+          <section>
+            <h1>React SkyLight</h1>
+            <button onClick={() => this.refs.simpleDialog.show()}>Open Modal</button>
+          </section>
+          <SkyLight hideOnOverlayClicked ref="simpleDialog" title="Hi, I'm a simple modal">
+            Hello, I dont have any callback.
+          </SkyLight>
+        </div>
+      )
+    }
+}
+
+class CreateSurvey extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+                showCreateQuestionDialog: false
+              };
+        this.handleClickCreateQuestion = this.handleClickCreateQuestion.bind(this);
+    }
+    
+   
+    
+    handleClickCreateQuestion() {
+        this.setState({
+            showCreateQuestionDialog: true
+        });
+      }
+    
+    render() {
+        return (
+            <div   className="panel panel-primary" id="panelNewIdea">
+                <div className="panel-heading"><h3>Create new survey</h3></div>
+
+                <div className="panel-body" id="formi" style={{ marginTop: '30px' }}>
+
+
+                    <div className="form-group">
+                        <input type="text"
+                            className="form-control"
+                            placeholder="Title"
+                            required></input>
+                    </div>
+                    <div className="form-group">
+                        <textarea form ="formi"
+                            className="form-control"
+                            cols="35"
+                            wrap="soft"
+                            placeholder="Description"></textarea>
+
+                    </div>
+                    
+                    <div className="form-group">
+                    <textarea form ="formi"
+                        className="form-control"
+                        cols="35"
+                        wrap="soft"
+                        placeholder="Help"></textarea>
+
+                </div>
+
+
+
+
+                    <div className="form-group well">
+                        <form className="form-inline" role="form" style={{ padding: '10px' }} name="urlForm">
+                            <div style={{ padding: '5px' }}>
+                                <button onClick={() => this.refs.simpleDialog.show()}  
+                                className="btn btn-info pull-right" >
+                                    Add question 
+                                </button>
+                                    <SkyLight hideOnOverlayClicked ref="simpleDialog" title="Hi, I'm a simple modal">
+                                    Hello, I dont have any callback.
+                                  </SkyLight>
+                                </div>
+
+                        </form>
+
+                        <div className="list-group">
+                            <h4 >Survey Questions </h4>
+                            <div   className="list-group-item" >
+                                
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                    <button className='btn btn-success'> Create</button>
+                </div>
+            </div>
+        )
+    }
+}
+                                        
+class NewComponent extends React.Component {
+    render() {
+      return (
+        <div {...this.props}>
+        <SkyLight hideOnOverlayClicked ref="simpleDialog" title="Hi, I'm a simple modal">
+        
+        Hello, I dont have any callback.
+        </SkyLight>
+        </div>
+      );
+    }  
+  }
 
 
 ReactDOM.render(
-                (
-                <Router history={hashHistory}>
-                    <Route path="/" component={App}/>
-                    <Route path="/AnswerSurvey" component={TestQuestion}/>
-                </Router>
-                ),
-                document.getElementById( 'react' )
+    (
+        <Router history={hashHistory}>
+            <Route path="/" component={App}/>
+            <Route path="/AnswerSurvey" component={TestQuestion}/>
+            <Route path="/createSurvey" component={CreateSurvey}/>
+        </Router>
+    ),
+    document.getElementById( 'react' )
 	)
