@@ -11,6 +11,8 @@ const follow = require( './follow' );// function to hop multiple links by "rel"
 // y el formato moderno que propone React utilizando la especificacion ES6, import
 // Se usan ambos solo a fines demostrativos
 import { Router, Route, hashHistory } from 'react-router';
+
+import {ListGroup, ListGroupItem} from 'react-bootstrap';
 import SkyLight from 'react-skylight';
 //IMPORTANTE:
 
@@ -472,8 +474,16 @@ class TestQuestion extends React.Component {
 
 }
 
-                                
-
+//
+//const listgroupInstance = (
+//        <ListGroup>
+//          <ListGroupItem href="#link1">Link 1</ListGroupItem>
+//          <ListGroupItem href="#link2">Link 2</ListGroupItem>
+//          <ListGroupItem onClick={doYourMagic}>
+//            Trigger an alert
+//          </ListGroupItem>
+//        </ListGroup>
+//      );
 
 class CreateSurvey extends React.Component {
     constructor(props) {
@@ -493,7 +503,27 @@ class CreateSurvey extends React.Component {
         this.handleSurveyNameChange = this.handleSurveyNameChange.bind(this);
         this.handleSurveyDescriptionChange = this.handleSurveyDescriptionChange.bind(this);
         this.handleSurveyHelpChange = this.handleSurveyHelpChange.bind(this);
+//        this.doYourMagic = this.doYourMagic.bind(this);
+        this.handleMagic = this.handleMagic.bind(this);
     }
+    
+
+            
+//    doYourMagic(){
+//        <ListGroup>
+//        <ListGroupItem href="#link1">Link 1</ListGroupItem>
+//        <ListGroupItem href="#link2">Link 2</ListGroupItem>
+//        <ListGroupItem onClick={this.handleMagic}>
+//          Trigger an alert
+//        </ListGroupItem>
+//      </ListGroup>
+//    }    
+            
+    
+    handleMagic(e){
+        alert("eeeeaaa");
+     }
+    
     
     handleNameChange(e){
         this.setState({questionName: e.target.value});
@@ -560,6 +590,9 @@ class CreateSurvey extends React.Component {
         this.state.newSurvey.questions.push(newQuestion);
 
         // Navigate away from the dialog to hide it.
+        this.setState({
+            showCreateQuestionDialog: false
+        });
     }
     
     handleClickCreateQuestion() {
@@ -569,6 +602,12 @@ class CreateSurvey extends React.Component {
       }
     
     render() {
+        
+        
+        var questionList = this.state.newSurvey.questions.map(q  => {
+                        return <ListGroupItem href="#test">{q.questionText}</ListGroupItem>
+                      });
+    
         return (
             <div   className="panel panel-primary" id="panelNewIdea">
                 <div className="panel-heading"><h3>Create new survey</h3></div>
@@ -670,9 +709,10 @@ class CreateSurvey extends React.Component {
 
                         <div className="list-group">
                             <h4 >Survey Questions </h4>
-                            <div   className="list-group-item" >
-                                
-                            </div>
+                            <ListGroup>
+                                {questionList}
+                          </ListGroup>
+                      
                         </div>
                         
                         
