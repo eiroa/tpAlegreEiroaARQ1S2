@@ -66,4 +66,5 @@ local.properties
 /.gradle/
 /build/
 node_modules/
+.gradle/
 
