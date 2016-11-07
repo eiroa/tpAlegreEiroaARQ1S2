@@ -44,15 +44,15 @@ public class Application implements CommandLineRunner {
 		List<Question> qs2 = new ArrayList<Question>();
 		List<Question> qs3 = new ArrayList<Question>();
 		
-		Question q1 = new TextQuestion("q1","qd1","help!!!");
-		Question q2 = new TextQuestion("q2","qd2","help!!!");
+		Question q1 = new TextQuestion(1,"q1","qd1","help!!!");
+		Question q2 = new TextQuestion(2,"q2","qd2","help!!!");
 		
 		
-		Question q3 = new TextQuestion("q3","qd3","help!!!");
-		Question q4 = new TextQuestion("q4","qd4","help!!!");
+		Question q3 = new TextQuestion(3,"q3","qd3","help!!!");
+		Question q4 = new TextQuestion(4,"q4","qd4","help!!!");
 		
-		Question q5 = new TextQuestion("q5","qd5","help!!!");
-		Question q6 = new TextQuestion("q6","qd6","help!!!");
+		Question q5 = new TextQuestion(5,"q5","qd5","help!!!");
+		Question q6 = new TextQuestion(6,"q6","qd6","help!!!");
 		
 		qs1.add(q1);
 		qs1.add(q2);

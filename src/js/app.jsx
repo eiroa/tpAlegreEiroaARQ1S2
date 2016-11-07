@@ -479,14 +479,17 @@ class CreateSurvey extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-                showCreateQuestionDialog: false
+                showCreateQuestionDialog: false,
+                newSurvey: {questions:[]}
               };
         this.handleClickCreateQuestion = this.handleClickCreateQuestion.bind(this);
         this.onCreate = this.onCreate.bind(this);
         this.createSurvey = this.createSurvey.bind(this);
+        this.createQuestion = this.createQuestion.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleHelpChange = this.handleHelpChange.bind(this);
+        
         this.handleSurveyNameChange = this.handleSurveyNameChange.bind(this);
         this.handleSurveyDescriptionChange = this.handleSurveyDescriptionChange.bind(this);
         this.handleSurveyHelpChange = this.handleSurveyHelpChange.bind(this);
@@ -532,18 +535,31 @@ class CreateSurvey extends React.Component {
     
     createSurvey(e){
         e.preventDefault();
-        var newSurvey = {};
-        newSurvey.name = this.state.surveyName;
-        newSurvey.description = this.state.surveyDescription;
-        newSurvey.helpText = this.state.surveyHelp;
         
-        console.log(newSurvey);
-        console.log("win?");
-        this.onCreate( newSurvey );
+        
+        this.state.newSurvey.name = this.state.surveyName;
+        this.state.newSurvey.description = this.state.surveyDescription;
+        this.state.newSurvey.helpText = this.state.surveyHelp;
+        
+        this.onCreate( this.state.newSurvey );
 
 
         // Navigate away from the dialog to hide it.
         window.location = "#";
+    }
+    
+    createQuestion(e){
+        e.preventDefault();
+        
+        var newQuestion = {};
+        
+        newQuestion.questionText = this.state.questionName;
+        newQuestion.description = this.state.questionDescription;
+        newQuestion.helpText = this.state.questionHelp;
+        
+        this.state.newSurvey.questions.push(newQuestion);
+
+        // Navigate away from the dialog to hide it.
     }
     
     handleClickCreateQuestion() {

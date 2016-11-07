@@ -791,14 +791,17 @@
 	        var _this16 = _possibleConstructorReturn(this, (CreateSurvey.__proto__ || Object.getPrototypeOf(CreateSurvey)).call(this, props));
 	
 	        _this16.state = {
-	            showCreateQuestionDialog: false
+	            showCreateQuestionDialog: false,
+	            newSurvey: { questions: [] }
 	        };
 	        _this16.handleClickCreateQuestion = _this16.handleClickCreateQuestion.bind(_this16);
 	        _this16.onCreate = _this16.onCreate.bind(_this16);
 	        _this16.createSurvey = _this16.createSurvey.bind(_this16);
+	        _this16.createQuestion = _this16.createQuestion.bind(_this16);
 	        _this16.handleNameChange = _this16.handleNameChange.bind(_this16);
 	        _this16.handleDescriptionChange = _this16.handleDescriptionChange.bind(_this16);
 	        _this16.handleHelpChange = _this16.handleHelpChange.bind(_this16);
+	
 	        _this16.handleSurveyNameChange = _this16.handleSurveyNameChange.bind(_this16);
 	        _this16.handleSurveyDescriptionChange = _this16.handleSurveyDescriptionChange.bind(_this16);
 	        _this16.handleSurveyHelpChange = _this16.handleSurveyHelpChange.bind(_this16);
@@ -853,16 +856,27 @@
 	        key: 'createSurvey',
 	        value: function createSurvey(e) {
 	            e.preventDefault();
-	            var newSurvey = {};
-	            newSurvey.name = this.state.surveyName;
-	            newSurvey.description = this.state.surveyDescription;
-	            newSurvey.helpText = this.state.surveyHelp;
 	
-	            console.log(newSurvey);
-	            console.log("win?");
-	            this.onCreate(newSurvey);
+	            this.state.newSurvey.name = this.state.surveyName;
+	            this.state.newSurvey.description = this.state.surveyDescription;
+	            this.state.newSurvey.helpText = this.state.surveyHelp;
+	
+	            this.onCreate(this.state.newSurvey);
 	
 	            window.location = "#";
+	        }
+	    }, {
+	        key: 'createQuestion',
+	        value: function createQuestion(e) {
+	            e.preventDefault();
+	
+	            var newQuestion = {};
+	
+	            newQuestion.questionText = this.state.questionName;
+	            newQuestion.description = this.state.questionDescription;
+	            newQuestion.helpText = this.state.questionHelp;
+	
+	            this.state.newSurvey.questions.push(newQuestion);
 	        }
 	    }, {
 	        key: 'handleClickCreateQuestion',
