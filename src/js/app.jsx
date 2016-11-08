@@ -11,7 +11,7 @@ const follow = require( './follow' );// function to hop multiple links by "rel"
 // y el formato moderno que propone React utilizando la especificacion ES6, import
 // Se usan ambos solo a fines demostrativos
 import { Router, Route, hashHistory } from 'react-router';
-
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import {ListGroup, ListGroupItem} from 'react-bootstrap';
 import SkyLight from 'react-skylight';
 //IMPORTANTE:
@@ -174,6 +174,7 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         this.handleNavNext = this.handleNavNext.bind( this );
         this.handleNavLast = this.handleNavLast.bind( this );
         this.handleInput = this.handleInput.bind( this );
+        this.handleDelete = this.handleDelete.bind( this );
     }
 
     // tag::handle-page-size-updates[]
@@ -186,6 +187,12 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
             ReactDOM.findDOMNode( this.refs.pageSize ).value = pageSize.substring( 0, pageSize.length - 1 );
         }
     }
+    
+    handleDelete(survey) {
+        this.props.onDelete( survey );
+    }
+    
+    
     // end::handle-page-size-updates[]
 
     // tag::handle-nav[]
@@ -208,16 +215,53 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         e.preventDefault();
         this.props.onNavigate( this.props.links.last.href );
     }
+    
+    
     // end::handle-nav[]
+  
+    alertMessage() {
+        alert("hello!");
+    }
+
 
     render() {
+        
+       
+        
+        var deleteClick = function(row) {
+            console.log("deleteShouldGoHere");
+        }
+        var answerClick = function(row) {
+            console.log("go Answer should go here");
+        }
+        
+        var surveysCopy = this.props.surveys.map ( 
+                function(s){ 
+                    return  {key:s.entity._links.self.href,
+                        name: s.entity.name,
+                        description: s.entity.description,
+                        helpText:s.entity.helpText,
+                        entity: s.entity}
+                    });
         var surveys = this.props.surveys.map( survey =>
             <Survey key={survey.entity._links.self.href}
                 survey={survey}
                 attributes={this.props.attributes}
                 onUpdate={this.props.onUpdate}
                 onDelete={this.props.onDelete}/>
+            
         );
+        
+        function deleteFormatter(cell, row){
+            return <button onClick={deleteClick(row)} className="btn btn-danger">Delete</button>
+            ;
+          }
+        
+        function answerFormatter(cell, row){
+            return <a href="#AnswerSurvey">
+            <button onClick={answerClick(row)} className="btn btn-success">Answer Survey</button>
+            </a>
+          }
 
         var navLinks = [];
         if ( "first" in this.props.links ) {
@@ -236,19 +280,17 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         return (
             <div>
                 <input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Help Text</th>
-                            <th>Actions</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        {surveys}
-                    </tbody>
-                </table>
+                
+              <BootstrapTable data={surveysCopy} striped={true} hover={true} condensed={true} >
+                <TableHeaderColumn dataField="name" isKey={true} dataSort={true} dataAlign="center">Name</TableHeaderColumn>
+                <TableHeaderColumn dataField="description" dataAlign="center">Description</TableHeaderColumn>
+                <TableHeaderColumn dataField="helpText" dataAlign="center">Help Text</TableHeaderColumn>
+                <TableHeaderColumn dataFormat={deleteFormatter}>Actions</TableHeaderColumn>
+                <TableHeaderColumn dataFormat={answerFormatter}>Actions</TableHeaderColumn>
+               
+            </BootstrapTable>
+            
+           
                 <div>
                     {navLinks}
                 </div>
@@ -303,19 +345,9 @@ class CreateDialog extends React.Component {
 
     handleSubmit( e ) {
         e.preventDefault();
-        var newSurvey = {};
-        this.props.attributes.forEach( attribute => {
-            newSurvey[attribute] = ReactDOM.findDOMNode( this.refs[attribute] ).value.trim();
-        });
-        this.props.onCreate( newSurvey );
-
-        // clear out the dialog's inputs
-        this.props.attributes.forEach( attribute => {
-            ReactDOM.findDOMNode( this.refs[attribute] ).value = '';
-        });
 
         // Navigate away from the dialog to hide it.
-        window.location = "#";
+        window.location = "#createSurvey";
     }
 
     render() {
@@ -326,21 +358,8 @@ class CreateDialog extends React.Component {
         );
 
         return (
-            <div>
-                <a href="#createSurvey">Create</a>
-
-                <div id="createSurvey" className="modalDialog">
-                    <div>
-                        <a href="#" title="Close" className="close">X</a>
-
-                        <h2>Create new Survey</h2>
-
-                        <form>
-                            {inputs}
-                            <button onClick={this.handleSubmit}>Create</button>
-                        </form>
-                    </div>
-                </div>
+            <div style={{padding:'10px'}}>
+                <button className="btn btn-success" onClick={this.handleSubmit}> Create new survey</button>
             </div>
         )
     }
@@ -474,16 +493,6 @@ class TestQuestion extends React.Component {
 
 }
 
-//
-//const listgroupInstance = (
-//        <ListGroup>
-//          <ListGroupItem href="#link1">Link 1</ListGroupItem>
-//          <ListGroupItem href="#link2">Link 2</ListGroupItem>
-//          <ListGroupItem onClick={doYourMagic}>
-//            Trigger an alert
-//          </ListGroupItem>
-//        </ListGroup>
-//      );
 
 class CreateSurvey extends React.Component {
     constructor(props) {
@@ -503,22 +512,9 @@ class CreateSurvey extends React.Component {
         this.handleSurveyNameChange = this.handleSurveyNameChange.bind(this);
         this.handleSurveyDescriptionChange = this.handleSurveyDescriptionChange.bind(this);
         this.handleSurveyHelpChange = this.handleSurveyHelpChange.bind(this);
-//        this.doYourMagic = this.doYourMagic.bind(this);
         this.handleMagic = this.handleMagic.bind(this);
     }
     
-
-            
-//    doYourMagic(){
-//        <ListGroup>
-//        <ListGroupItem href="#link1">Link 1</ListGroupItem>
-//        <ListGroupItem href="#link2">Link 2</ListGroupItem>
-//        <ListGroupItem onClick={this.handleMagic}>
-//          Trigger an alert
-//        </ListGroupItem>
-//      </ListGroup>
-//    }    
-            
     
     handleMagic(e){
         alert("eeeeaaa");
@@ -593,6 +589,8 @@ class CreateSurvey extends React.Component {
         this.setState({
             showCreateQuestionDialog: false
         });
+        
+        this.onCloseClicked();
     }
     
     handleClickCreateQuestion() {
