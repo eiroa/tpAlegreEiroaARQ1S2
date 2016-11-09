@@ -1,24 +1,142 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head lang="en">
-    <meta charset="UTF-8"/>
-    <title>ReactJS + Spring Data REST</title>
-    <link rel="stylesheet" href="/main.css" />
-    
-    <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+<meta charset="UTF-8" />
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
+<style>
+tags-input .tags {
+	-moz-appearance: textfield;
+	-webkit-appearance: textfield;
+	padding: 1px;
+	overflow: hidden;
+	word-wrap: break-word;
+	cursor: text;
+	background-color: #fff;
+	border: 1px solid #a9a9a9;
+	box-shadow: 1px 1px 1px 0 #d3d3d3 inset;
+	height: inherit;
+}
 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+tags-input .tags {
+	-moz-appearance: textfield;
+	-webkit-appearance: textfield;
+	padding: 1px;
+	overflow: hidden;
+	word-wrap: break-word;
+	cursor: text;
+	background-color: #fff;
+	border: 1px solid #a9a9a9;
+	box-shadow: 1px 1px 1px 0 #d3d3d3 inset;
+	height: inherit;
+}
+
+tags-input .host {
+	position: relative;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	height: inherit;
+}
+</style>
+
+
+<title>Sistema de encuestas UNQ</title>
+<link rel="stylesheet" href="/main.css" />
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+	integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	crossorigin="anonymous"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	crossorigin="anonymous" />
+
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+	integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+	crossorigin="anonymous" />
+
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	crossorigin="anonymous"></script>
 </head>
+
 <body>
 
-<div class="jumbotron">
-	<div id="react"></div>
-</div>
+	<nav class="navbar navbar-default">
+		<ul class="nav navbar-nav">
+			<li><a> <strong id="user-id">User</strong></a></li>
+			<!-- <li><a href="/#/register"><button class="btn btn-info">Register</button></a>
+			</li> -->
+		</ul>
+		<ul class="nav navbar-nav pull-right">
+		<!-- 
+		
+		<li>
+				<button id="logout" class="btn btn-warning"
+					style="margin-top: 7px; margin-right: 10px;">Logout</button>
+			</li>
+			<li><a href="/#/login"><button class="btn btn-success">Login</button></a>
+			</li>
+		 -->
+			<li><a href="/#/"><button class="btn btn-primary"><span class="glyphicon glyphicon-home"></span></button></a>
+			</li>
+		</ul>
+	</nav>
 
-    <script src="built/bundle.js"></script>
 
+
+
+		<div class="col-md-3 col-xs-12 container-fluid"
+			style="margin-top: 20px; margin-left: 20px; max-height: 600px;">
+			<h4 class="text-info text-center">Activity log</h4>
+			<div class="jumbotron pre-scrollable" style="max-height: 600px;">
+
+
+				<div class="well">
+
+					<span>Activity Log </span>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6 col-xs-12">
+			<div class="jumbotron">
+				<div id="react"></div>
+			</div>
+
+			<script src="built/bundle.js"></script>
+
+		</div>
+
+		<div class="col-md-2 col-xs-12" style="margin-top: 50px;">
+			<div class="jumbotron">
+
+				<h4 class="text-info text-center">Actions</h4>
+
+
+
+
+
+				<div class="dropdown text-center">
+					<button class="btn btn-default dropdown-toggle" type="button"
+						id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="true">
+						Actions <span class="caret"></span>
+					</button>
+
+					<ul class="dropdown-menu">
+						<li ><a href="/#/users">User
+								administration</a></li>
+						<li ><a href="/#/subjects">Surveys
+								administration</a></li>
+					</ul>
+				</div>
+
+			</div>
+
+		</div>
 </body>
+
 </html>
