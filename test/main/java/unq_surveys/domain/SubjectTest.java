@@ -14,7 +14,7 @@ public class SubjectTest {
 	@Test
 	public void testSubjectCanAddCourses() {		
 		Subject subject = new Subject("Programming 101");
-		Course aCourse = new Course(9, 12, 20);
+		Course aCourse = new Course(20);
 		subject.addCourse(aCourse);
 		assertEquals(1, subject.numberOfCourses());
 	}
