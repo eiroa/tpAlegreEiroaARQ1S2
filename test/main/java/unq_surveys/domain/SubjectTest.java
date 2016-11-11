@@ -1,8 +1,12 @@
-package unq_surveys.domain;
+package main.java.unq_surveys.domain;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import unq_surveys.domain.Course;
+import unq_surveys.domain.Subject;
 
 public class SubjectTest {
 

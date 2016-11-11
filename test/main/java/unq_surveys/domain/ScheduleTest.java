@@ -1,4 +1,5 @@
-package unq_surveys.domain;
+package main.java.unq_surveys.domain;
+
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -6,6 +7,8 @@ import static org.junit.Assert.fail;
 import java.time.DayOfWeek;
 
 import org.junit.Test;
+
+import unq_surveys.domain.Schedule;
 
 public class ScheduleTest {
 

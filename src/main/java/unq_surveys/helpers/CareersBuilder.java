@@ -8,10 +8,12 @@ import unq_surveys.domain.Career;
 import unq_surveys.domain.Course;
 import unq_surveys.domain.Schedule;
 import unq_surveys.domain.Subject;
+import unq_surveys.services.CareerService;
+import unq_surveys.services.SubjectService;
 
 public class CareersBuilder {
 
-	public static void build() {
+	public static void build(CareerService careerService, SubjectService subjectService) {
 		Career tpi = new Career("Tecnicatura Universitaria en Programacion Informatica");
 		
 		Subject intro = new Subject("Introduccion a la Programacion");
@@ -38,6 +40,9 @@ public class CareersBuilder {
 		List<Subject> liSubjects = Arrays.asList(intro,mate1,orga,obj1,obj2,uis,obj3,gest,prac,lyp,arq1);
 		addSubjectsToCareer(li, liSubjects);
 		buildCoursesForSubjects(liSubjects);
+		
+		saveSubjects(liSubjects, subjectService);
+		careerService.save(li);
 	}
 
 	private static void addSubjectsToCareer(Career career, List<Subject> subjects) {
@@ -57,5 +62,12 @@ public class CareersBuilder {
 		course.addSchedule(firstSchedule);
 		course.addSchedule(secondSchedule);
 		subject.addCourse(course);
+	}
+	
+	private static void saveSubjects(List<Subject> subjects, SubjectService repo) {
+		
+		subjects.stream().forEach(subject -> {
+			repo.save(subject);
+		});
 	}
 }

@@ -3,8 +3,15 @@ package unq_surveys.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Data;
+
+@Data
 public class Course {
 
+	
 	int quota; //Cupo
 	List<Schedule> schedules;
 
@@ -26,11 +33,4 @@ public class Course {
 		schedules.add(aSchedule);
 	}
 	
-	public List<Schedule> getSchedules() {
-		return schedules;
-	}	
-	
-	public int getQuota() {
-		return quota;
-	}	
 }

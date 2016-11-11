@@ -14,16 +14,6 @@ public class TextQuestion extends Question {
 		
 	}
 	
-//	public TextQuestion(
-//			@JsonProperty("questionText") String questionText, 
-//			@JsonProperty("description") String description, 
-//			@JsonProperty("helpText") String helpText) {
-//		super(questionText,description,helpText);
-//		this.setQuestionText(questionText);
-//		this.setDescription(description);
-//		this.setHelpText(helpText);
-//	}
-	
 	public TextQuestion(){
 		super();
 	}

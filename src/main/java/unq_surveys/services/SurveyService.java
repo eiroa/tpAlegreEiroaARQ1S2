@@ -39,7 +39,6 @@ public class SurveyService {
 	public List<Survey> getAll(){
 		return repository.findAll();
 	}
-	
 	public void deleteAll(){
 		repository.deleteAll();
 	}

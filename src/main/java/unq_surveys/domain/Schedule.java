@@ -2,10 +2,17 @@ package unq_surveys.domain;
 
 import java.time.DayOfWeek;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Data;
+
+@Data
 public class Schedule {
 	
-	static final int MINIMUM_START_TIME = 8;
-	static final int MAXIMUM_END_TIME = 22;
+	public static final int MINIMUM_START_TIME = 8;
+	public static final int MAXIMUM_END_TIME = 22;
+
 	
 	int startTime;
 	int endTime;
@@ -18,18 +25,6 @@ public class Schedule {
 		this.dayOfWeek = dayOfWeek;
 	}
 
-	public int getStartTime() {
-		return startTime;
-	}
-
-	public int getEndTime() {
-		return endTime;
-	}
-
-	public DayOfWeek getDayOfWeek() {
-		return dayOfWeek;
-	}	
-	
 	private void assertScheduleParameters(int startTime, int endTime, DayOfWeek dayOfWeek){
 		assertStartTime(startTime);
 		assertEndTime(endTime);
