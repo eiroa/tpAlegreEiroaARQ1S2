@@ -1,5 +1,6 @@
 package unq_surveys.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -35,8 +36,14 @@ public class Survey {
 		
 		private List<Question> questions;
 		
-		public Survey(){};
+		public Survey(){};		
 		
+		public Survey(String name) {			
+			this.name = name;
+			this.questions = new ArrayList<Question>();
+		}
+
+
 		public Survey(String id,String name, String description, String helpText) {
 			super();
 			this.id = id;
@@ -59,8 +66,29 @@ public class Survey {
 			this.helpText = helpText;
 			this.questions = questions;
 		}
-		
-		
-		
-	   
+
+		public String getId() {
+			return id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public String getHelpText() {
+			return helpText;
+		}
+
+		public Long getVersion() {
+			return version;
+		}
+
+		public List<Question> getQuestions() {
+			return questions;
+		}
+				  
 }

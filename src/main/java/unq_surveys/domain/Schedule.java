@@ -42,4 +42,22 @@ public class Schedule {
 	private void assertStartTime(int startTime) {
 		if(startTime < MINIMUM_START_TIME) { throw new RuntimeException("Schedule startTime cannot be lesser than " + MINIMUM_START_TIME); }
 	}
+
+	public int getStartTime() {
+		return startTime;
+	}
+
+	public int getEndTime() {
+		return endTime;
+	}
+
+	public DayOfWeek getDayOfWeek() {
+		return dayOfWeek;
+	}
+
+	@Override
+	public String toString() {
+		return getDayOfWeek() + " from " + getStartTime() + " to " + getEndTime();
+	}
+	
 }

@@ -37,4 +37,16 @@ public class Career {
 		return subjects.size();
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List<Subject> getSubjects() {
+		return subjects;
+	}
+	
 }

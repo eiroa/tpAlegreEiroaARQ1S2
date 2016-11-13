@@ -1,15 +1,11 @@
 package unq_surveys.helpers;
 
-import java.time.DayOfWeek;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import unq_surveys.domain.Career;
-import unq_surveys.domain.Course;
 import unq_surveys.domain.Question;
-import unq_surveys.domain.Schedule;
-import unq_surveys.domain.Subject;
+import unq_surveys.domain.RadioQuestion;
 import unq_surveys.domain.Survey;
 import unq_surveys.domain.TextQuestion;
 import unq_surveys.services.SurveyService;
@@ -72,5 +68,19 @@ public class SurveysBuilder {
 		surveys.stream().forEach(s -> {
 			repo.save(s);
 		});
+	}
+
+
+
+	public Survey buildSurveyForCareer(Career aCareer) {
+		Survey builtSurvey = new Survey(aCareer.getName());		
+		aCareer.getSubjects().stream().forEach( subject -> {
+			RadioQuestion subjectQuestion = new RadioQuestion(subject.getName());
+			subject.getCourses().stream().forEach( course -> {
+				subjectQuestion.getOptions().put(course.hashCode(), course.toString());
+			});			
+			builtSurvey.getQuestions().add(subjectQuestion); 
+		});
+		return builtSurvey;
 	}
 }
