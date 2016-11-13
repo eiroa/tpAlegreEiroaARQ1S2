@@ -1,7 +1,6 @@
 package unq_surveys.helpers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -19,7 +18,6 @@ import unq_surveys.domain.Survey;
 
 public class SurveysBuilderTest {
 
-	private SurveysBuilder surveysBuilder = new SurveysBuilder();
 	private Career aCareer = new Career("Test Career");
 	private Subject subject1 = new Subject("Subject 1");
 	private Subject subject2 = new Subject("Subject 2");
@@ -39,19 +37,19 @@ public class SurveysBuilderTest {
 	
 	@Test
 	public void testBuiltSurveyNameIsCareerName() {		
-		Survey builtSurvey = surveysBuilder.buildSurveyForCareer(aCareer);
+		Survey builtSurvey = SurveysBuilder.buildSurveyForCareer(aCareer);
 		assertEquals("Test Career", builtSurvey.getName());
 	}	
 	
 	@Test
 	public void testBuiltSurveyHasAQuestionPerEachSubject() {
-		Survey builtSurvey = surveysBuilder.buildSurveyForCareer(aCareer);
+		Survey builtSurvey = SurveysBuilder.buildSurveyForCareer(aCareer);
 		assertEquals(careerSubjects.size(), builtSurvey.getQuestions().size());
 	}
 	
 	@Test
 	public void testBuiltSurveyQuestionsTextsAreTheirSubjectsNames() {
-		Survey builtSurvey = surveysBuilder.buildSurveyForCareer(aCareer);
+		Survey builtSurvey = SurveysBuilder.buildSurveyForCareer(aCareer);
 		List<Question> surveyQuestions = builtSurvey.getQuestions();
 		assertTrue(surveyQuestions.stream().anyMatch(question -> question.getQuestionText().equals("Subject 1")));
 		assertTrue(surveyQuestions.stream().anyMatch(question -> question.getQuestionText().equals("Subject 2")));
@@ -60,7 +58,7 @@ public class SurveysBuilderTest {
 	
 	@Test
 	public void testBuiltSurveyQuestionsHaveAnOptionPerEachBelongingSubjectCourse() {
-		Survey builtSurvey = surveysBuilder.buildSurveyForCareer(aCareer);
+		Survey builtSurvey = SurveysBuilder.buildSurveyForCareer(aCareer);
 		List<Question> surveyQuestions = builtSurvey.getQuestions();
 		RadioQuestion subject1Question = (RadioQuestion) surveyQuestions.stream().filter(question -> question.getQuestionText().equals("Subject 1")).findFirst().get();
 		assertEquals(subject1.numberOfCourses(),subject1Question.getOptions().size());

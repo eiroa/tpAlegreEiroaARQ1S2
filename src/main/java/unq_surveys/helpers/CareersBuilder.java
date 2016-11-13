@@ -28,7 +28,8 @@ public class CareersBuilder {
 		List<Subject> tpiSubjects = Arrays.asList(intro,mate1,orga,obj1,obj2,uis,obj3,desapp);
 		addSubjectsToCareer(tpi, tpiSubjects);
 		buildCoursesForSubjects(tpiSubjects);
-		
+		saveSubjects(tpiSubjects, subjectService);
+		careerService.save(tpi);
 		
 		Career li = new Career("Licenciatura en Informatica");
 		

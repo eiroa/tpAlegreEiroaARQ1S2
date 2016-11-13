@@ -58,7 +58,7 @@ public class Application implements CommandLineRunner {
 		careerRepo.deleteAll();
 		
 		CareersBuilder.build(careerRepo,subjectRepo);
-		SurveysBuilder.build(surveyRepo);
+		SurveysBuilder.build(surveyRepo, careerRepo);
 		
 		
 	}
