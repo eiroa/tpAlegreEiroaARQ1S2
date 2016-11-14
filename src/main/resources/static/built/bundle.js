@@ -58,6 +58,10 @@
 	
 	var _reactSkylight2 = _interopRequireDefault(_reactSkylight);
 	
+	var _reactConfirmBootstrap = __webpack_require__(529);
+	
+	var _reactConfirmBootstrap2 = _interopRequireDefault(_reactConfirmBootstrap);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -68,10 +72,10 @@
 	
 	var React = __webpack_require__(3);
 	var ReactDOM = __webpack_require__(102);
-	var when = __webpack_require__(529);
-	var client = __webpack_require__(548);
+	var when = __webpack_require__(530);
+	var client = __webpack_require__(549);
 	var root = '/api';
-	var follow = __webpack_require__(576);
+	var follow = __webpack_require__(577);
 	var App = function (_React$Component) {
 	    _inherits(App, _React$Component);
 	
@@ -85,11 +89,19 @@
 	        _this.onCreate = _this.onCreate.bind(_this);
 	        _this.onUpdate = _this.onUpdate.bind(_this);
 	        _this.onDelete = _this.onDelete.bind(_this);
+	        _this.onDeleteDirect = _this.onDeleteDirect.bind(_this);
 	        _this.onNavigate = _this.onNavigate.bind(_this);
+	        _this.handleCreate = _this.handleCreate.bind(_this);
 	        return _this;
 	    }
 	
 	    _createClass(App, [{
+	        key: 'handleCreate',
+	        value: function handleCreate(e) {
+	            e.preventDefault();
+	            window.location = "#createSurvey";
+	        }
+	    }, {
 	        key: 'loadFromServer',
 	        value: function loadFromServer(pageSize) {
 	            var _this2 = this;
@@ -171,6 +183,15 @@
 	            });
 	        }
 	    }, {
+	        key: 'onDeleteDirect',
+	        value: function onDeleteDirect(link) {
+	            var _this6 = this;
+	
+	            client({ method: 'DELETE', path: link }).then(function (response) {
+	                _this6.loadFromServer(_this6.state.pageSize);
+	            });
+	        }
+	    }, {
 	        key: 'updatePageSize',
 	        value: function updatePageSize(pageSize) {
 	            if (pageSize !== this.state.pageSize) {
@@ -180,13 +201,13 @@
 	    }, {
 	        key: 'onNavigate',
 	        value: function onNavigate(navUri) {
-	            var _this6 = this;
+	            var _this7 = this;
 	
 	            client({
 	                method: 'GET',
 	                path: navUri
 	            }).then(function (surveyCollection) {
-	                _this6.links = surveyCollection.entity._links;
+	                _this7.links = surveyCollection.entity._links;
 	
 	                return surveyCollection.entity._embedded.surveys.map(function (survey) {
 	                    return client({
@@ -197,11 +218,11 @@
 	            }).then(function (surveyPromises) {
 	                return when.all(surveyPromises);
 	            }).then(function (surveys) {
-	                _this6.setState({
+	                _this7.setState({
 	                    surveys: surveys,
-	                    attributes: Object.keys(_this6.schema.properties),
-	                    pageSize: _this6.state.pageSize,
-	                    links: _this6.links
+	                    attributes: Object.keys(_this7.schema.properties),
+	                    pageSize: _this7.state.pageSize,
+	                    links: _this7.links
 	                });
 	            });
 	        }
@@ -216,15 +237,28 @@
 	            return React.createElement(
 	                'div',
 	                null,
-	                React.createElement(CreateDialog, { attributes: this.state.attributes, onCreate: this.onCreate }),
-	                React.createElement(SurveyList, { surveys: this.state.surveys,
-	                    links: this.state.links,
-	                    attributes: this.state.attributes,
-	                    pageSize: this.state.pageSize,
-	                    onNavigate: this.onNavigate,
-	                    onDelete: this.onDelete,
-	                    onUpdate: this.onUpdate,
-	                    updatePageSize: this.updatePageSize })
+	                React.createElement(
+	                    'div',
+	                    { style: { padding: '10px' } },
+	                    React.createElement(
+	                        'button',
+	                        { className: 'btn btn-success', onClick: this.handleCreate },
+	                        ' Create new survey'
+	                    )
+	                ),
+	                React.createElement(
+	                    'div',
+	                    null,
+	                    React.createElement(SurveyList, { surveys: this.state.surveys,
+	                        links: this.state.links,
+	                        attributes: this.state.attributes,
+	                        pageSize: this.state.pageSize,
+	                        onNavigate: this.onNavigate,
+	                        onDelete: this.onDelete,
+	                        onDeleteDirect: this.onDeleteDirect,
+	                        onUpdate: this.onUpdate,
+	                        updatePageSize: this.updatePageSize })
+	                )
 	            );
 	        }
 	    }]);
@@ -238,15 +272,15 @@
 	    function SurveyList(props) {
 	        _classCallCheck(this, SurveyList);
 	
-	        var _this7 = _possibleConstructorReturn(this, (SurveyList.__proto__ || Object.getPrototypeOf(SurveyList)).call(this, props));
+	        var _this8 = _possibleConstructorReturn(this, (SurveyList.__proto__ || Object.getPrototypeOf(SurveyList)).call(this, props));
 	
-	        _this7.handleNavFirst = _this7.handleNavFirst.bind(_this7);
-	        _this7.handleNavPrev = _this7.handleNavPrev.bind(_this7);
-	        _this7.handleNavNext = _this7.handleNavNext.bind(_this7);
-	        _this7.handleNavLast = _this7.handleNavLast.bind(_this7);
-	        _this7.handleInput = _this7.handleInput.bind(_this7);
-	        _this7.handleDelete = _this7.handleDelete.bind(_this7);
-	        return _this7;
+	        _this8.handleNavFirst = _this8.handleNavFirst.bind(_this8);
+	        _this8.handleNavPrev = _this8.handleNavPrev.bind(_this8);
+	        _this8.handleNavNext = _this8.handleNavNext.bind(_this8);
+	        _this8.handleNavLast = _this8.handleNavLast.bind(_this8);
+	        _this8.handleInput = _this8.handleInput.bind(_this8);
+	        _this8.handleDelete = _this8.handleDelete.bind(_this8);
+	        return _this8;
 	    }
 	
 	    _createClass(SurveyList, [{
@@ -262,8 +296,10 @@
 	        }
 	    }, {
 	        key: 'handleDelete',
-	        value: function handleDelete(survey) {
-	            this.props.onDelete(survey);
+	        value: function handleDelete() {
+	            if (this.refs.table.state.selectedRowKeys[0] != null) {
+	                this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+	            }
 	        }
 	    }, {
 	        key: 'handleNavFirst',
@@ -290,43 +326,48 @@
 	            this.props.onNavigate(this.props.links.last.href);
 	        }
 	    }, {
-	        key: 'alertMessage',
-	        value: function alertMessage() {
-	            alert("hello!");
-	        }
-	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this8 = this;
+	            var _this9 = this;
 	
-	            var deleteClick = function deleteClick(row) {
-	                console.log("deleteShouldGoHere");
-	            };
-	            var answerClick = function answerClick(row) {
-	                console.log("go Answer should go here");
-	            };
+	            var currentRow = null;
+	
+	            var buttonDelete = React.createElement(
+	                _reactConfirmBootstrap2.default,
+	                {
+	                    onConfirm: this.handleDelete,
+	                    body: 'Are you sure you want to delete this survey?',
+	                    confirmText: 'Confirm Delete',
+	                    title: 'Deleting' },
+	                React.createElement(
+	                    'button',
+	                    { className: 'btn btn-danger' },
+	                    'Delete'
+	                )
+	            );
 	
 	            var surveysCopy = this.props.surveys.map(function (s) {
 	                return { key: s.entity._links.self.href,
 	                    name: s.entity.name,
 	                    description: s.entity.description,
 	                    helpText: s.entity.helpText,
-	                    entity: s.entity };
+	                    entity: s.entity,
+	                    deleteFunction: function deleteFunction() {
+	                        return this.props.onDeleteDirect;
+	                    }
+	                };
 	            });
 	            var surveys = this.props.surveys.map(function (survey) {
 	                return React.createElement(Survey, { key: survey.entity._links.self.href,
 	                    survey: survey,
-	                    attributes: _this8.props.attributes,
-	                    onUpdate: _this8.props.onUpdate,
-	                    onDelete: _this8.props.onDelete });
+	                    attributes: _this9.props.attributes,
+	                    onUpdate: _this9.props.onUpdate,
+	                    onDelete: _this9.props.onDelete,
+	                    onDeleteDirect: _this9.props.onDeleteDirect });
 	            });
 	
 	            function deleteFormatter(cell, row) {
-	                return React.createElement(
-	                    'button',
-	                    { onClick: deleteClick(row), className: 'btn btn-danger' },
-	                    'Delete'
-	                );
+	                return buttonDelete;
 	            }
 	
 	            function answerFormatter(cell, row) {
@@ -335,52 +376,84 @@
 	                    { href: '#AnswerSurvey' },
 	                    React.createElement(
 	                        'button',
-	                        { onClick: answerClick(row), className: 'btn btn-success' },
+	                        { className: 'btn btn-success' },
 	                        'Answer Survey'
 	                    )
 	                );
 	            }
-	
 	            var navLinks = [];
-	            if ("first" in this.props.links) {
-	                navLinks.push(React.createElement(
-	                    'button',
-	                    { key: 'first', onClick: this.handleNavFirst },
-	                    '< < '
-	                ));
-	            }
-	            if ("prev" in this.props.links) {
-	                navLinks.push(React.createElement(
-	                    'button',
-	                    { key: 'prev', onClick: this.handleNavPrev },
-	                    '< '
-	                ));
-	            }
-	            if ("next" in this.props.links) {
-	                navLinks.push(React.createElement(
-	                    'button',
-	                    { key: 'next', onClick: this.handleNavNext },
-	                    '> '
-	                ));
-	            }
 	            if ("last" in this.props.links) {
 	                navLinks.push(React.createElement(
 	                    'button',
-	                    { key: 'last', onClick: this.handleNavLast },
-	                    '> > '
+	                    { className: 'btn btn-primary pull-right', key: 'last', onClick: this.handleNavLast },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-forward' }),
+	                    ' '
 	                ));
+	            }
+	
+	            if ("next" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'next', onClick: this.handleNavNext },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-triangle-right' }),
+	                    ' '
+	                ));
+	            }
+	
+	            if ("prev" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'prev', onClick: this.handleNavPrev },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-triangle-left' }),
+	                    ' '
+	                ));
+	            }
+	
+	            if ("first" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'first', onClick: this.handleNavFirst },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-backward' })
+	                ));
+	            }
+	            var selectRowProp = {
+	                mode: "radio",
+	                clickToSelect: true,
+	                bgColor: "rgb(238, 193, 213)",
+	                onSelect: onRowSelect
+	            };
+	
+	            var optionsProp = {
+	                onDeleteRow: this.handleDelete,
+	                deleteText: "destroy"
+	            };
+	
+	            function onRowSelect(row, isSelected) {
+	                console.log(row);
+	                console.log("selected: " + isSelected);
 	            }
 	
 	            return React.createElement(
 	                'div',
 	                null,
-	                React.createElement('input', { ref: 'pageSize', defaultValue: this.props.pageSize, onInput: this.handleInput }),
 	                React.createElement(
 	                    _reactBootstrapTable.BootstrapTable,
-	                    { data: surveysCopy, striped: true, hover: true, condensed: true },
+	                    {
+	                        ref: 'table',
+	                        data: surveysCopy,
+	                        striped: true,
+	                        hover: true,
+	                        condensed: true,
+	                        selectRow: selectRowProp,
+	                        options: optionsProp },
 	                    React.createElement(
 	                        _reactBootstrapTable.TableHeaderColumn,
-	                        { dataField: 'name', isKey: true, dataSort: true, dataAlign: 'center' },
+	                        { dataField: 'key', isKey: true, hidden: true },
+	                        'Key'
+	                    ),
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'name', dataSort: true, dataAlign: 'center' },
 	                        'Name'
 	                    ),
 	                    React.createElement(
@@ -395,19 +468,32 @@
 	                    ),
 	                    React.createElement(
 	                        _reactBootstrapTable.TableHeaderColumn,
-	                        { dataFormat: deleteFormatter },
+	                        { dataFormat: deleteFormatter, dataAlign: 'center' },
 	                        'Actions'
 	                    ),
 	                    React.createElement(
 	                        _reactBootstrapTable.TableHeaderColumn,
-	                        { dataFormat: answerFormatter },
+	                        { dataFormat: answerFormatter, dataAlign: 'center', width: '130' },
 	                        'Actions'
 	                    )
 	                ),
 	                React.createElement(
 	                    'div',
 	                    null,
-	                    navLinks
+	                    React.createElement(
+	                        'div',
+	                        { className: 'form-inline', style: { padding: '10px' } },
+	                        'Page size',
+	                        React.createElement('input', { ref: 'pageSize',
+	                            type: 'number',
+	                            min: '1', max: '50', step: '1',
+	                            className: 'form-control',
+	                            name: 'pagination',
+	                            onInput: this.handleInput,
+	                            defaultValue: this.props.pageSize
+	                        }),
+	                        navLinks
+	                    )
 	                )
 	            );
 	        }
@@ -422,10 +508,10 @@
 	    function Survey(props) {
 	        _classCallCheck(this, Survey);
 	
-	        var _this9 = _possibleConstructorReturn(this, (Survey.__proto__ || Object.getPrototypeOf(Survey)).call(this, props));
+	        var _this10 = _possibleConstructorReturn(this, (Survey.__proto__ || Object.getPrototypeOf(Survey)).call(this, props));
 	
-	        _this9.handleDelete = _this9.handleDelete.bind(_this9);
-	        return _this9;
+	        _this10.handleDelete = _this10.handleDelete.bind(_this10);
+	        return _this10;
 	    }
 	
 	    _createClass(Survey, [{
@@ -495,53 +581,8 @@
 	    return Survey;
 	}(React.Component);
 	
-	var CreateDialog = function (_React$Component4) {
-	    _inherits(CreateDialog, _React$Component4);
-	
-	    function CreateDialog(props) {
-	        _classCallCheck(this, CreateDialog);
-	
-	        var _this10 = _possibleConstructorReturn(this, (CreateDialog.__proto__ || Object.getPrototypeOf(CreateDialog)).call(this, props));
-	
-	        _this10.handleSubmit = _this10.handleSubmit.bind(_this10);
-	        return _this10;
-	    }
-	
-	    _createClass(CreateDialog, [{
-	        key: 'handleSubmit',
-	        value: function handleSubmit(e) {
-	            e.preventDefault();
-	
-	            window.location = "#createSurvey";
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var inputs = this.props.attributes.map(function (attribute) {
-	                return React.createElement(
-	                    'p',
-	                    { key: attribute },
-	                    React.createElement('input', { type: 'text', placeholder: attribute, ref: attribute, className: 'field' })
-	                );
-	            });
-	
-	            return React.createElement(
-	                'div',
-	                { style: { padding: '10px' } },
-	                React.createElement(
-	                    'button',
-	                    { className: 'btn btn-success', onClick: this.handleSubmit },
-	                    ' Create new survey'
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return CreateDialog;
-	}(React.Component);
-	
-	var UpdateDialog = function (_React$Component5) {
-	    _inherits(UpdateDialog, _React$Component5);
+	var UpdateDialog = function (_React$Component4) {
+	    _inherits(UpdateDialog, _React$Component4);
 	
 	    function UpdateDialog(props) {
 	        _classCallCheck(this, UpdateDialog);
@@ -627,8 +668,8 @@
 	
 	;
 	
-	var TestQuestion = function (_React$Component6) {
-	    _inherits(TestQuestion, _React$Component6);
+	var TestQuestion = function (_React$Component5) {
+	    _inherits(TestQuestion, _React$Component5);
 	
 	    function TestQuestion() {
 	        _classCallCheck(this, TestQuestion);
@@ -786,8 +827,8 @@
 	    return TestQuestion;
 	}(React.Component);
 	
-	var CreateSurvey = function (_React$Component7) {
-	    _inherits(CreateSurvey, _React$Component7);
+	var CreateSurvey = function (_React$Component6) {
+	    _inherits(CreateSurvey, _React$Component6);
 	
 	    function CreateSurvey(props) {
 	        _classCallCheck(this, CreateSurvey);
@@ -71303,6 +71344,125 @@
 /* 529 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
+	var React = __webpack_require__(3);
+	
+	var _require = __webpack_require__(276);
+	
+	var Button = _require.Button;
+	var Modal = _require.Modal;
+	
+	
+	var Confirm = React.createClass({
+	    displayName: 'Confirm',
+	
+	    propTypes: {
+	        body: React.PropTypes.node.isRequired,
+	        buttonText: React.PropTypes.node,
+	        cancelText: React.PropTypes.node,
+	        confirmBSStyle: React.PropTypes.string,
+	        confirmText: React.PropTypes.node,
+	        onConfirm: React.PropTypes.func.isRequired,
+	        showCancelButton: React.PropTypes.bool.isRequired,
+	        title: React.PropTypes.node.isRequired,
+	        visible: React.PropTypes.bool
+	    },
+	
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            cancelText: 'Cancel',
+	            confirmText: 'Confirm',
+	            confirmBSStyle: 'danger',
+	            showCancelButton: true
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        if (!this.props.visible) {
+	            return {
+	                isOpened: false
+	            };
+	        } else {
+	            return {
+	                isOpened: true
+	            };
+	        }
+	    },
+	    onButtonClick: function onButtonClick() {
+	        this.setState({
+	            isOpened: true
+	        });
+	    },
+	    onClose: function onClose() {
+	        this.setState({
+	            isOpened: false
+	        });
+	    },
+	    onConfim: function onConfim() {
+	        this.setState({
+	            isOpened: false
+	        });
+	        this.props.onConfirm();
+	    },
+	    render: function render() {
+	        var cancelButton = this.props.showCancelButton ? React.createElement(
+	            Button,
+	            { bsStyle: 'default', onClick: this.onClose },
+	            this.props.cancelText
+	        ) : null;
+	        var modal = React.createElement(
+	            Modal,
+	            { show: this.state.isOpened, onHide: this.onClose },
+	            React.createElement(
+	                Modal.Header,
+	                null,
+	                React.createElement(
+	                    Modal.Title,
+	                    null,
+	                    this.props.title
+	                )
+	            ),
+	            React.createElement(
+	                Modal.Body,
+	                null,
+	                this.props.body
+	            ),
+	            React.createElement(
+	                Modal.Footer,
+	                null,
+	                cancelButton,
+	                React.createElement(
+	                    Button,
+	                    { bsStyle: this.props.confirmBSStyle, onClick: this.onConfim },
+	                    this.props.confirmText
+	                )
+	            )
+	        );
+	        var content;
+	        if (this.props.children) {
+	            var btn = React.Children.only(this.props.children);
+	            content = React.cloneElement(btn, {
+	                onClick: this.onButtonClick,
+	                style: this.props.style
+	            }, btn.props.children, modal);
+	        } else {
+	            content = React.createElement(
+	                Button,
+	                { onClick: this.onButtonClick, style: this.props.style },
+	                this.props.buttonText,
+	                modal
+	            );
+	        }
+	        return content;
+	    }
+	});
+	
+	module.exports = Confirm;
+
+/***/ },
+/* 530 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
 	
 	/**
@@ -71314,24 +71474,24 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 	
-		var timed = __webpack_require__(530);
-		var array = __webpack_require__(534);
-		var flow = __webpack_require__(537);
-		var fold = __webpack_require__(538);
-		var inspect = __webpack_require__(539);
-		var generate = __webpack_require__(540);
-		var progress = __webpack_require__(541);
-		var withThis = __webpack_require__(542);
-		var unhandledRejection = __webpack_require__(543);
-		var TimeoutError = __webpack_require__(533);
+		var timed = __webpack_require__(531);
+		var array = __webpack_require__(535);
+		var flow = __webpack_require__(538);
+		var fold = __webpack_require__(539);
+		var inspect = __webpack_require__(540);
+		var generate = __webpack_require__(541);
+		var progress = __webpack_require__(542);
+		var withThis = __webpack_require__(543);
+		var unhandledRejection = __webpack_require__(544);
+		var TimeoutError = __webpack_require__(534);
 	
 		var Promise = [array, flow, fold, generate, progress,
 			inspect, withThis, timed, unhandledRejection]
 			.reduce(function(Promise, feature) {
 				return feature(Promise);
-			}, __webpack_require__(545));
+			}, __webpack_require__(546));
 	
-		var apply = __webpack_require__(536)(Promise);
+		var apply = __webpack_require__(537)(Promise);
 	
 		// Public API
 	
@@ -71534,7 +71694,7 @@
 
 
 /***/ },
-/* 530 */
+/* 531 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -71544,8 +71704,8 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
-		var env = __webpack_require__(531);
-		var TimeoutError = __webpack_require__(533);
+		var env = __webpack_require__(532);
+		var TimeoutError = __webpack_require__(534);
 	
 		function setTimeout(f, ms, x, y) {
 			return env.setTimer(function() {
@@ -71618,7 +71778,7 @@
 
 
 /***/ },
-/* 531 */
+/* 532 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -71652,7 +71812,7 @@
 	
 		} else if (!capturedSetTimeout) { // vert.x
 			var vertxRequire = require;
-			var vertx = __webpack_require__(532);
+			var vertx = __webpack_require__(533);
 			setTimer = function (f, ms) { return vertx.setTimer(ms, f); };
 			clearTimer = vertx.cancelTimer;
 			asap = vertx.runOnLoop || vertx.runOnContext;
@@ -71698,13 +71858,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ },
-/* 532 */
+/* 533 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 533 */
+/* 534 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -71736,7 +71896,7 @@
 	}(__webpack_require__(266)));
 
 /***/ },
-/* 534 */
+/* 535 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -71746,8 +71906,8 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
-		var state = __webpack_require__(535);
-		var applier = __webpack_require__(536);
+		var state = __webpack_require__(536);
+		var applier = __webpack_require__(537);
 	
 		return function array(Promise) {
 	
@@ -72031,7 +72191,7 @@
 
 
 /***/ },
-/* 535 */
+/* 536 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72072,7 +72232,7 @@
 
 
 /***/ },
-/* 536 */
+/* 537 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72133,7 +72293,7 @@
 
 
 /***/ },
-/* 537 */
+/* 538 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72299,7 +72459,7 @@
 
 
 /***/ },
-/* 538 */
+/* 539 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72332,7 +72492,7 @@
 
 
 /***/ },
-/* 539 */
+/* 540 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72342,7 +72502,7 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
-		var inspect = __webpack_require__(535).inspect;
+		var inspect = __webpack_require__(536).inspect;
 	
 		return function inspection(Promise) {
 	
@@ -72358,7 +72518,7 @@
 
 
 /***/ },
-/* 540 */
+/* 541 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72429,7 +72589,7 @@
 
 
 /***/ },
-/* 541 */
+/* 542 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72459,7 +72619,7 @@
 
 
 /***/ },
-/* 542 */
+/* 543 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72503,7 +72663,7 @@
 
 
 /***/ },
-/* 543 */
+/* 544 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72513,8 +72673,8 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
-		var setTimer = __webpack_require__(531).setTimer;
-		var format = __webpack_require__(544);
+		var setTimer = __webpack_require__(532).setTimer;
+		var format = __webpack_require__(545);
 	
 		return function unhandledRejection(Promise) {
 	
@@ -72595,7 +72755,7 @@
 
 
 /***/ },
-/* 544 */
+/* 545 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72657,7 +72817,7 @@
 
 
 /***/ },
-/* 545 */
+/* 546 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -72667,9 +72827,9 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 	
-		var makePromise = __webpack_require__(546);
-		var Scheduler = __webpack_require__(547);
-		var async = __webpack_require__(531).asap;
+		var makePromise = __webpack_require__(547);
+		var Scheduler = __webpack_require__(548);
+		var async = __webpack_require__(532).asap;
 	
 		return makePromise({
 			scheduler: new Scheduler(async)
@@ -72680,7 +72840,7 @@
 
 
 /***/ },
-/* 546 */
+/* 547 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -73614,7 +73774,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ },
-/* 547 */
+/* 548 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-2014 original author or authors */
@@ -73700,27 +73860,27 @@
 
 
 /***/ },
-/* 548 */
+/* 549 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var rest = __webpack_require__(549);
-	var defaultRequest = __webpack_require__(557);
-	var mime = __webpack_require__(559);
-	var uriTemplateInterceptor = __webpack_require__(573);
-	var errorCode = __webpack_require__(574);
-	var baseRegistry = __webpack_require__(561);
+	var rest = __webpack_require__(550);
+	var defaultRequest = __webpack_require__(558);
+	var mime = __webpack_require__(560);
+	var uriTemplateInterceptor = __webpack_require__(574);
+	var errorCode = __webpack_require__(575);
+	var baseRegistry = __webpack_require__(562);
 	
 	var registry = baseRegistry.child();
 	
-	registry.register('text/uri-list', __webpack_require__(575));
-	registry.register('application/hal+json', __webpack_require__(562));
+	registry.register('text/uri-list', __webpack_require__(576));
+	registry.register('application/hal+json', __webpack_require__(563));
 	
 	module.exports = rest.wrap(mime, { registry: registry }).wrap(uriTemplateInterceptor).wrap(errorCode).wrap(defaultRequest, { headers: { 'Accept': 'application/hal+json' } });
 
 /***/ },
-/* 549 */
+/* 550 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -73735,8 +73895,8 @@
 	
 		!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 	
-			var rest = __webpack_require__(550),
-			    browser = __webpack_require__(552);
+			var rest = __webpack_require__(551),
+			    browser = __webpack_require__(553);
 	
 			rest.setPlatformDefaultClient(browser);
 	
@@ -73751,7 +73911,7 @@
 
 
 /***/ },
-/* 550 */
+/* 551 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -73826,7 +73986,7 @@
 	
 			var client, target, platformDefault;
 	
-			client = __webpack_require__(551);
+			client = __webpack_require__(552);
 	
 			/**
 			 * Make a request with the default client
@@ -73881,7 +74041,7 @@
 
 
 /***/ },
-/* 551 */
+/* 552 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -73951,7 +74111,7 @@
 
 
 /***/ },
-/* 552 */
+/* 553 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -73968,11 +74128,11 @@
 	
 			var when, UrlBuilder, normalizeHeaderName, responsePromise, client, headerSplitRE;
 	
-			when = __webpack_require__(529);
-			UrlBuilder = __webpack_require__(553);
-			normalizeHeaderName = __webpack_require__(555);
-			responsePromise = __webpack_require__(556);
-			client = __webpack_require__(551);
+			when = __webpack_require__(530);
+			UrlBuilder = __webpack_require__(554);
+			normalizeHeaderName = __webpack_require__(556);
+			responsePromise = __webpack_require__(557);
+			client = __webpack_require__(552);
 	
 			// according to the spec, the line break is '\r\n', but doesn't hold true in practice
 			headerSplitRE = /[\r|\n]+/;
@@ -74131,7 +74291,7 @@
 
 
 /***/ },
-/* 553 */
+/* 554 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -74150,7 +74310,7 @@
 	
 			var mixin, origin, urlRE, absoluteUrlRE, fullyQualifiedUrlRE;
 	
-			mixin = __webpack_require__(554);
+			mixin = __webpack_require__(555);
 	
 			urlRE = /([a-z][a-z0-9\+\-\.]*:)\/\/([^@]+@)?(([^:\/]+)(:([0-9]+))?)?(\/[^?#]*)?(\?[^#]*)?(#\S*)?/i;
 			absoluteUrlRE = /^([a-z][a-z0-9\-\+\.]*:\/\/|\/)/i;
@@ -74366,7 +74526,7 @@
 
 
 /***/ },
-/* 554 */
+/* 555 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -74420,7 +74580,7 @@
 
 
 /***/ },
-/* 555 */
+/* 556 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -74464,7 +74624,7 @@
 
 
 /***/ },
-/* 556 */
+/* 557 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -74479,8 +74639,8 @@
 	
 		!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 	
-			var when = __webpack_require__(529),
-				normalizeHeaderName = __webpack_require__(555);
+			var when = __webpack_require__(530),
+				normalizeHeaderName = __webpack_require__(556);
 	
 			function property(promise, name) {
 				return promise.then(
@@ -74610,7 +74770,7 @@
 
 
 /***/ },
-/* 557 */
+/* 558 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -74627,8 +74787,8 @@
 	
 			var interceptor, mixinUtil, defaulter;
 	
-			interceptor = __webpack_require__(558);
-			mixinUtil = __webpack_require__(554);
+			interceptor = __webpack_require__(559);
+			mixinUtil = __webpack_require__(555);
 	
 			defaulter = (function () {
 	
@@ -74695,7 +74855,7 @@
 
 
 /***/ },
-/* 558 */
+/* 559 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -74712,11 +74872,11 @@
 	
 			var defaultClient, mixin, responsePromise, client, when;
 	
-			defaultClient = __webpack_require__(550);
-			mixin = __webpack_require__(554);
-			responsePromise = __webpack_require__(556);
-			client = __webpack_require__(551);
-			when = __webpack_require__(529);
+			defaultClient = __webpack_require__(551);
+			mixin = __webpack_require__(555);
+			responsePromise = __webpack_require__(557);
+			client = __webpack_require__(552);
+			when = __webpack_require__(530);
 	
 			/**
 			 * Interceptors have the ability to intercept the request and/org response
@@ -74866,7 +75026,7 @@
 
 
 /***/ },
-/* 559 */
+/* 560 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -74883,10 +75043,10 @@
 	
 			var interceptor, mime, registry, noopConverter, when;
 	
-			interceptor = __webpack_require__(558);
-			mime = __webpack_require__(560);
-			registry = __webpack_require__(561);
-			when = __webpack_require__(529);
+			interceptor = __webpack_require__(559);
+			mime = __webpack_require__(561);
+			registry = __webpack_require__(562);
+			when = __webpack_require__(530);
 	
 			noopConverter = {
 				read: function (obj) { return obj; },
@@ -74982,7 +75142,7 @@
 
 
 /***/ },
-/* 560 */
+/* 561 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75041,7 +75201,7 @@
 
 
 /***/ },
-/* 561 */
+/* 562 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75058,8 +75218,8 @@
 	
 			var mime, when, registry;
 	
-			mime = __webpack_require__(560);
-			when = __webpack_require__(529);
+			mime = __webpack_require__(561);
+			when = __webpack_require__(530);
 	
 			function Registry(mimes) {
 	
@@ -75143,11 +75303,11 @@
 			registry = new Registry({});
 	
 			// include provided serializers
-			registry.register('application/hal', __webpack_require__(562));
-			registry.register('application/json', __webpack_require__(569));
-			registry.register('application/x-www-form-urlencoded', __webpack_require__(570));
-			registry.register('multipart/form-data', __webpack_require__(571));
-			registry.register('text/plain', __webpack_require__(572));
+			registry.register('application/hal', __webpack_require__(563));
+			registry.register('application/json', __webpack_require__(570));
+			registry.register('application/x-www-form-urlencoded', __webpack_require__(571));
+			registry.register('multipart/form-data', __webpack_require__(572));
+			registry.register('text/plain', __webpack_require__(573));
 	
 			registry.register('+json', registry.delegate('application/json'));
 	
@@ -75162,7 +75322,7 @@
 
 
 /***/ },
-/* 562 */
+/* 563 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75179,12 +75339,12 @@
 	
 			var pathPrefix, template, find, lazyPromise, responsePromise, when;
 	
-			pathPrefix = __webpack_require__(563);
-			template = __webpack_require__(564);
-			find = __webpack_require__(567);
-			lazyPromise = __webpack_require__(568);
-			responsePromise = __webpack_require__(556);
-			when = __webpack_require__(529);
+			pathPrefix = __webpack_require__(564);
+			template = __webpack_require__(565);
+			find = __webpack_require__(568);
+			lazyPromise = __webpack_require__(569);
+			responsePromise = __webpack_require__(557);
+			when = __webpack_require__(530);
 	
 			function defineProperty(obj, name, value) {
 				Object.defineProperty(obj, name, {
@@ -75307,7 +75467,7 @@
 
 
 /***/ },
-/* 563 */
+/* 564 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75324,8 +75484,8 @@
 	
 			var interceptor, UrlBuilder;
 	
-			interceptor = __webpack_require__(558);
-			UrlBuilder = __webpack_require__(553);
+			interceptor = __webpack_require__(559);
+			UrlBuilder = __webpack_require__(554);
 	
 			function startsWith(str, prefix) {
 				return str.indexOf(prefix) === 0;
@@ -75372,7 +75532,7 @@
 
 
 /***/ },
-/* 564 */
+/* 565 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75389,9 +75549,9 @@
 	
 			var interceptor, uriTemplate, mixin;
 	
-			interceptor = __webpack_require__(558);
-			uriTemplate = __webpack_require__(565);
-			mixin = __webpack_require__(554);
+			interceptor = __webpack_require__(559);
+			uriTemplate = __webpack_require__(566);
+			mixin = __webpack_require__(555);
 	
 			/**
 			 * Applies request params to the path as a URI Template
@@ -75434,7 +75594,7 @@
 
 
 /***/ },
-/* 565 */
+/* 566 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75453,7 +75613,7 @@
 	
 			var uriEncoder, operations, prefixRE;
 	
-			uriEncoder = __webpack_require__(566);
+			uriEncoder = __webpack_require__(567);
 	
 			prefixRE = /^([^:]*):([0-9]+)$/;
 			operations = {
@@ -75612,7 +75772,7 @@
 
 
 /***/ },
-/* 566 */
+/* 567 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75798,7 +75958,7 @@
 
 
 /***/ },
-/* 567 */
+/* 568 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75845,7 +76005,7 @@
 
 
 /***/ },
-/* 568 */
+/* 569 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75862,7 +76022,7 @@
 	
 			var when;
 	
-			when = __webpack_require__(529);
+			when = __webpack_require__(530);
 	
 			/**
 			 * Create a promise whose work is started only when a handler is registered.
@@ -75906,7 +76066,7 @@
 
 
 /***/ },
-/* 569 */
+/* 570 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -75959,7 +76119,7 @@
 
 
 /***/ },
-/* 570 */
+/* 571 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -76055,7 +76215,7 @@
 
 
 /***/ },
-/* 571 */
+/* 572 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -76134,7 +76294,7 @@
 
 
 /***/ },
-/* 572 */
+/* 573 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -76169,7 +76329,7 @@
 
 
 /***/ },
-/* 573 */
+/* 574 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -76177,7 +76337,7 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 		'use strict';
 	
-		var interceptor = __webpack_require__(558);
+		var interceptor = __webpack_require__(559);
 	
 		return interceptor({
 			request: function request(_request) {
@@ -76192,7 +76352,7 @@
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 574 */
+/* 575 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -76209,8 +76369,8 @@
 	
 			var interceptor, when;
 	
-			interceptor = __webpack_require__(558);
-			when = __webpack_require__(529);
+			interceptor = __webpack_require__(559);
+			when = __webpack_require__(530);
 	
 			/**
 			 * Rejects the response promise based on the status code.
@@ -76245,7 +76405,7 @@
 
 
 /***/ },
-/* 575 */
+/* 576 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -76270,7 +76430,7 @@
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 576 */
+/* 577 */
 /***/ function(module, exports) {
 
 	'use strict';
