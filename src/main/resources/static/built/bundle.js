@@ -84,7 +84,7 @@
 	
 	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-	        _this.state = { surveys: [], attributes: [], pageSize: 2, links: {} };
+	        _this.state = { surveys: [], attributes: [], pageSize: 2, links: {}, key: "" };
 	        _this.updatePageSize = _this.updatePageSize.bind(_this);
 	        _this.onCreate = _this.onCreate.bind(_this);
 	        _this.onUpdate = _this.onUpdate.bind(_this);
@@ -251,6 +251,7 @@
 	                    null,
 	                    React.createElement(SurveyList, { surveys: this.state.surveys,
 	                        links: this.state.links,
+	                        key: this.state.key,
 	                        attributes: this.state.attributes,
 	                        pageSize: this.state.pageSize,
 	                        onNavigate: this.onNavigate,
@@ -280,10 +281,277 @@
 	        _this8.handleNavLast = _this8.handleNavLast.bind(_this8);
 	        _this8.handleInput = _this8.handleInput.bind(_this8);
 	        _this8.handleDelete = _this8.handleDelete.bind(_this8);
+	        _this8.handleAnswer = _this8.handleAnswer.bind(_this8);
 	        return _this8;
 	    }
 	
 	    _createClass(SurveyList, [{
+	        key: 'handleInput',
+	        value: function handleInput(e) {
+	            e.preventDefault();
+	            var pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
+	            if (/^[0-9]+$/.test(pageSize)) {
+	                this.props.updatePageSize(pageSize);
+	            } else {
+	                ReactDOM.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
+	            }
+	        }
+	    }, {
+	        key: 'handleAnswer',
+	        value: function handleAnswer(e) {
+	            e.preventDefault();
+	
+	            if (this.refs.table.state.selectedRowKeys[0] != null) {
+	                var key = this.refs.table.state.selectedRowKeys[0];
+	                window.location = "#answerSurvey?key=" + key;
+	            }
+	        }
+	    }, {
+	        key: 'handleDelete',
+	        value: function handleDelete() {
+	            if (this.refs.table.state.selectedRowKeys[0] != null) {
+	                this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+	            }
+	        }
+	    }, {
+	        key: 'handleNavFirst',
+	        value: function handleNavFirst(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.first.href);
+	        }
+	    }, {
+	        key: 'handleNavPrev',
+	        value: function handleNavPrev(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.prev.href);
+	        }
+	    }, {
+	        key: 'handleNavNext',
+	        value: function handleNavNext(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.next.href);
+	        }
+	    }, {
+	        key: 'handleNavLast',
+	        value: function handleNavLast(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.last.href);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this9 = this;
+	
+	            var surveysCopy = this.props.surveys.map(function (s) {
+	                return { key: s.entity._links.self.href,
+	                    name: s.entity.name,
+	                    description: s.entity.description,
+	                    entity: s.entity
+	                };
+	            });
+	
+	            var surveys = this.props.surveys.map(function (survey) {
+	                return React.createElement(Survey, { key: survey.entity._links.self.href,
+	                    survey: survey,
+	                    attributes: _this9.props.attributes,
+	                    onUpdate: _this9.props.onUpdate,
+	                    onDelete: _this9.props.onDelete,
+	                    onDeleteDirect: _this9.props.onDeleteDirect });
+	            });
+	
+	            var keyRow = { key: "" };
+	
+	            var getRow = function getRow() {
+	                return keyRow;
+	            };
+	
+	            var but = React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    _reactConfirmBootstrap2.default,
+	                    {
+	                        onConfirm: this.handleDelete,
+	                        body: 'Are you sure you want to delete this survey?',
+	                        confirmText: 'Confirm Delete',
+	                        title: 'Deleting' },
+	                    React.createElement(
+	                        'button',
+	                        { className: 'btn btn-danger' },
+	                        'Delete'
+	                    )
+	                ),
+	                React.createElement(
+	                    'button',
+	                    { style: { marginLeft: '5px' }, onClick: this.handleAnswer, className: 'btn btn-success' },
+	                    ' Answer '
+	                )
+	            );
+	
+	            function actionsFormatter(cell, row) {
+	                keyRow.key = row.key;
+	                return but;
+	            }
+	
+	            var navLinks = [];
+	            if ("last" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'last', onClick: this.handleNavLast },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-forward' }),
+	                    ' '
+	                ));
+	            }
+	
+	            if ("next" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'next', onClick: this.handleNavNext },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-triangle-right' }),
+	                    ' '
+	                ));
+	            }
+	
+	            if ("prev" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'prev', onClick: this.handleNavPrev },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-triangle-left' }),
+	                    ' '
+	                ));
+	            }
+	
+	            if ("first" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'first', onClick: this.handleNavFirst },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-backward' })
+	                ));
+	            }
+	            var selectRowProp = {
+	                mode: "radio",
+	                clickToSelect: true,
+	                bgColor: "rgb(208, 193, 213)",
+	                onSelect: onRowSelect
+	            };
+	
+	            var optionsProp = {
+	                onDeleteRow: this.handleDelete,
+	                deleteText: "destroy"
+	            };
+	
+	            function onRowSelect(row, isSelected) {
+	                console.log(row);
+	                console.log("selected: " + isSelected);
+	                keyRow.key = row.key;
+	            }
+	
+	            function getRowKey() {
+	                return this.refs.table.state.selectedRowKeys[0];
+	            }
+	
+	            return React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    _reactBootstrapTable.BootstrapTable,
+	                    {
+	                        ref: 'table',
+	                        data: surveysCopy,
+	                        striped: true,
+	                        hover: true,
+	                        condensed: true,
+	                        selectRow: selectRowProp,
+	                        options: optionsProp },
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'key', isKey: true, hidden: true },
+	                        'Key'
+	                    ),
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'name', dataSort: true, dataAlign: 'center' },
+	                        'Name'
+	                    ),
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataFormat: actionsFormatter, dataAlign: 'center' },
+	                        'Actions'
+	                    )
+	                ),
+	                React.createElement(
+	                    'div',
+	                    null,
+	                    React.createElement(
+	                        'div',
+	                        { className: 'form-inline', style: { padding: '10px' } },
+	                        'Page size',
+	                        React.createElement('input', { ref: 'pageSize',
+	                            type: 'number',
+	                            min: '1', max: '50', step: '1',
+	                            className: 'form-control',
+	                            name: 'pagination',
+	                            onInput: this.handleInput,
+	                            defaultValue: this.props.pageSize
+	                        }),
+	                        navLinks
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return SurveyList;
+	}(React.Component);
+	
+	var QuestionList = function (_React$Component3) {
+	    _inherits(QuestionList, _React$Component3);
+	
+	    function QuestionList(props) {
+	        _classCallCheck(this, QuestionList);
+	
+	        var _this10 = _possibleConstructorReturn(this, (QuestionList.__proto__ || Object.getPrototypeOf(QuestionList)).call(this, props));
+	
+	        _this10.state = { questions: [] };
+	        _this10.handleNavFirst = _this10.handleNavFirst.bind(_this10);
+	        _this10.handleNavPrev = _this10.handleNavPrev.bind(_this10);
+	        _this10.handleNavNext = _this10.handleNavNext.bind(_this10);
+	        _this10.handleNavLast = _this10.handleNavLast.bind(_this10);
+	        _this10.handleInput = _this10.handleInput.bind(_this10);
+	        _this10.handleDelete = _this10.handleDelete.bind(_this10);
+	        _this10.loadSurvey = _this10.loadSurvey.bind(_this10);
+	        _this10.handleAnswer = _this10.handleAnswer.bind(_this10);
+	        return _this10;
+	    }
+	
+	    _createClass(QuestionList, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.loadSurvey(this.props.location.query.key);
+	        }
+	    }, {
+	        key: 'loadSurvey',
+	        value: function loadSurvey(key) {
+	            var _this11 = this;
+	
+	            client({
+	                method: 'GET',
+	                path: key
+	            }).then(function (response) {
+	                _this11.setState({
+	                    survey: response.entity,
+	                    questions: response.entity.questions
+	                });
+	            });
+	        }
+	    }, {
+	        key: 'handleAnswer',
+	        value: function handleAnswer(e) {
+	            e.preventDefault();
+	
+	            window.location = "#question";
+	        }
+	    }, {
 	        key: 'handleInput',
 	        value: function handleInput(e) {
 	            e.preventDefault();
@@ -328,7 +596,146 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this9 = this;
+	
+	            var but = React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    'button',
+	                    { style: { marginLeft: '5px' }, className: 'btn btn-success', onClick: this.handleAnswer },
+	                    ' Answer question'
+	                )
+	            );
+	
+	            function actionsFormatter(cell, row) {
+	                return but;
+	            }
+	
+	            var questions = this.state.questions.map(function (q, i) {
+	                return { key: i,
+	                    name: q.questionText,
+	                    options: q.options
+	
+	                };
+	            });
+	
+	            var navLinks = [];
+	            var selectRowProp = {
+	                mode: "radio",
+	                clickToSelect: true,
+	                bgColor: "rgb(238, 193, 213)",
+	                onSelect: onRowSelect
+	            };
+	
+	            var optionsProp = {
+	                onDeleteRow: this.handleDelete,
+	                deleteText: "destroy"
+	            };
+	
+	            function onRowSelect(row, isSelected) {
+	                console.log(row);
+	                console.log("selected: " + isSelected);
+	            }
+	
+	            return React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    _reactBootstrapTable.BootstrapTable,
+	                    {
+	                        ref: 'table',
+	                        data: questions,
+	                        striped: true,
+	                        hover: true,
+	                        condensed: true
+	                    },
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'key', isKey: true, hidden: true },
+	                        'Key'
+	                    ),
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'name' },
+	                        'Question'
+	                    ),
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataFormat: actionsFormatter, dataAlign: 'center' },
+	                        'Actions'
+	                    )
+	                ),
+	                React.createElement('div', null)
+	            );
+	        }
+	    }]);
+	
+	    return QuestionList;
+	}(React.Component);
+	
+	var CareerList = function (_React$Component4) {
+	    _inherits(CareerList, _React$Component4);
+	
+	    function CareerList(props) {
+	        _classCallCheck(this, CareerList);
+	
+	        var _this12 = _possibleConstructorReturn(this, (CareerList.__proto__ || Object.getPrototypeOf(CareerList)).call(this, props));
+	
+	        _this12.handleNavFirst = _this12.handleNavFirst.bind(_this12);
+	        _this12.handleNavPrev = _this12.handleNavPrev.bind(_this12);
+	        _this12.handleNavNext = _this12.handleNavNext.bind(_this12);
+	        _this12.handleNavLast = _this12.handleNavLast.bind(_this12);
+	        _this12.handleInput = _this12.handleInput.bind(_this12);
+	        _this12.handleDelete = _this12.handleDelete.bind(_this12);
+	        return _this12;
+	    }
+	
+	    _createClass(CareerList, [{
+	        key: 'handleInput',
+	        value: function handleInput(e) {
+	            e.preventDefault();
+	            var pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
+	            if (/^[0-9]+$/.test(pageSize)) {
+	                this.props.updatePageSize(pageSize);
+	            } else {
+	                ReactDOM.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
+	            }
+	        }
+	    }, {
+	        key: 'handleDelete',
+	        value: function handleDelete() {
+	            if (this.refs.table.state.selectedRowKeys[0] != null) {
+	                this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+	            }
+	        }
+	    }, {
+	        key: 'handleNavFirst',
+	        value: function handleNavFirst(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.first.href);
+	        }
+	    }, {
+	        key: 'handleNavPrev',
+	        value: function handleNavPrev(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.prev.href);
+	        }
+	    }, {
+	        key: 'handleNavNext',
+	        value: function handleNavNext(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.next.href);
+	        }
+	    }, {
+	        key: 'handleNavLast',
+	        value: function handleNavLast(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.last.href);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this13 = this;
 	
 	            var currentRow = null;
 	
@@ -346,11 +753,21 @@
 	                )
 	            );
 	
+	            var buttonAnswer = React.createElement(
+	                'a',
+	                { href: '#answerSurvey' },
+	                React.createElement(
+	                    'button',
+	                    { style: { padding: '5px;' }, className: 'btn btn-success' },
+	                    ' Answer '
+	                ),
+	                ' '
+	            );
+	
 	            var surveysCopy = this.props.surveys.map(function (s) {
 	                return { key: s.entity._links.self.href,
 	                    name: s.entity.name,
 	                    description: s.entity.description,
-	                    helpText: s.entity.helpText,
 	                    entity: s.entity,
 	                    deleteFunction: function deleteFunction() {
 	                        return this.props.onDeleteDirect;
@@ -360,20 +777,24 @@
 	            var surveys = this.props.surveys.map(function (survey) {
 	                return React.createElement(Survey, { key: survey.entity._links.self.href,
 	                    survey: survey,
-	                    attributes: _this9.props.attributes,
-	                    onUpdate: _this9.props.onUpdate,
-	                    onDelete: _this9.props.onDelete,
-	                    onDeleteDirect: _this9.props.onDeleteDirect });
+	                    attributes: _this13.props.attributes,
+	                    onUpdate: _this13.props.onUpdate,
+	                    onDelete: _this13.props.onDelete,
+	                    onDeleteDirect: _this13.props.onDeleteDirect });
 	            });
 	
-	            function deleteFormatter(cell, row) {
-	                return buttonDelete;
+	            function actionsFormatter(cell, row) {
+	                return React.createElement(
+	                    'div',
+	                    null,
+	                    'buttonDelete buttonAnswer'
+	                );
 	            }
 	
 	            function answerFormatter(cell, row) {
 	                return React.createElement(
 	                    'a',
-	                    { href: '#AnswerSurvey' },
+	                    { href: '#answerSurvey' },
 	                    React.createElement(
 	                        'button',
 	                        { className: 'btn btn-success' },
@@ -463,8 +884,228 @@
 	                    ),
 	                    React.createElement(
 	                        _reactBootstrapTable.TableHeaderColumn,
-	                        { dataField: 'helpText', dataAlign: 'center' },
-	                        'Help Text'
+	                        { dataFormat: actionsFormatter, dataAlign: 'center' },
+	                        'Actions'
+	                    )
+	                ),
+	                React.createElement(
+	                    'div',
+	                    null,
+	                    React.createElement(
+	                        'div',
+	                        { className: 'form-inline', style: { padding: '10px' } },
+	                        'Page size',
+	                        React.createElement('input', { ref: 'pageSize',
+	                            type: 'number',
+	                            min: '1', max: '50', step: '1',
+	                            className: 'form-control',
+	                            name: 'pagination',
+	                            onInput: this.handleInput,
+	                            defaultValue: this.props.pageSize
+	                        }),
+	                        navLinks
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return CareerList;
+	}(React.Component);
+	
+	var SubjectList = function (_React$Component5) {
+	    _inherits(SubjectList, _React$Component5);
+	
+	    function SubjectList(props) {
+	        _classCallCheck(this, SubjectList);
+	
+	        var _this14 = _possibleConstructorReturn(this, (SubjectList.__proto__ || Object.getPrototypeOf(SubjectList)).call(this, props));
+	
+	        _this14.handleNavFirst = _this14.handleNavFirst.bind(_this14);
+	        _this14.handleNavPrev = _this14.handleNavPrev.bind(_this14);
+	        _this14.handleNavNext = _this14.handleNavNext.bind(_this14);
+	        _this14.handleNavLast = _this14.handleNavLast.bind(_this14);
+	        _this14.handleInput = _this14.handleInput.bind(_this14);
+	        _this14.handleDelete = _this14.handleDelete.bind(_this14);
+	        return _this14;
+	    }
+	
+	    _createClass(SubjectList, [{
+	        key: 'handleInput',
+	        value: function handleInput(e) {
+	            e.preventDefault();
+	            var pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
+	            if (/^[0-9]+$/.test(pageSize)) {
+	                this.props.updatePageSize(pageSize);
+	            } else {
+	                ReactDOM.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
+	            }
+	        }
+	    }, {
+	        key: 'handleDelete',
+	        value: function handleDelete() {
+	            if (this.refs.table.state.selectedRowKeys[0] != null) {
+	                this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+	            }
+	        }
+	    }, {
+	        key: 'handleNavFirst',
+	        value: function handleNavFirst(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.first.href);
+	        }
+	    }, {
+	        key: 'handleNavPrev',
+	        value: function handleNavPrev(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.prev.href);
+	        }
+	    }, {
+	        key: 'handleNavNext',
+	        value: function handleNavNext(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.next.href);
+	        }
+	    }, {
+	        key: 'handleNavLast',
+	        value: function handleNavLast(e) {
+	            e.preventDefault();
+	            this.props.onNavigate(this.props.links.last.href);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this15 = this;
+	
+	            var currentRow = null;
+	
+	            var buttonDelete = React.createElement(
+	                _reactConfirmBootstrap2.default,
+	                {
+	                    onConfirm: this.handleDelete,
+	                    body: 'Are you sure you want to delete this survey?',
+	                    confirmText: 'Confirm Delete',
+	                    title: 'Deleting' },
+	                React.createElement(
+	                    'button',
+	                    { className: 'btn btn-danger' },
+	                    'Delete'
+	                )
+	            );
+	
+	            var surveysCopy = this.props.surveys.map(function (s) {
+	                return { key: s.entity._links.self.href,
+	                    name: s.entity.name,
+	                    description: s.entity.description,
+	                    entity: s.entity,
+	                    deleteFunction: function deleteFunction() {
+	                        return this.props.onDeleteDirect;
+	                    }
+	                };
+	            });
+	            var surveys = this.props.surveys.map(function (survey) {
+	                return React.createElement(Survey, { key: survey.entity._links.self.href,
+	                    survey: survey,
+	                    attributes: _this15.props.attributes,
+	                    onUpdate: _this15.props.onUpdate,
+	                    onDelete: _this15.props.onDelete,
+	                    onDeleteDirect: _this15.props.onDeleteDirect });
+	            });
+	
+	            function deleteFormatter(cell, row) {
+	                return buttonDelete;
+	            }
+	
+	            function answerFormatter(cell, row) {
+	                return React.createElement(
+	                    'a',
+	                    { href: '#answerSurvey' },
+	                    React.createElement(
+	                        'button',
+	                        { className: 'btn btn-success' },
+	                        'Answer Survey'
+	                    )
+	                );
+	            }
+	            var navLinks = [];
+	            if ("last" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'last', onClick: this.handleNavLast },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-forward' }),
+	                    ' '
+	                ));
+	            }
+	
+	            if ("next" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'next', onClick: this.handleNavNext },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-triangle-right' }),
+	                    ' '
+	                ));
+	            }
+	
+	            if ("prev" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'prev', onClick: this.handleNavPrev },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-triangle-left' }),
+	                    ' '
+	                ));
+	            }
+	
+	            if ("first" in this.props.links) {
+	                navLinks.push(React.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary pull-right', key: 'first', onClick: this.handleNavFirst },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-backward' })
+	                ));
+	            }
+	            var selectRowProp = {
+	                mode: "radio",
+	                clickToSelect: true,
+	                bgColor: "rgb(238, 193, 213)",
+	                onSelect: onRowSelect
+	            };
+	
+	            var optionsProp = {
+	                onDeleteRow: this.handleDelete,
+	                deleteText: "destroy"
+	            };
+	
+	            function onRowSelect(row, isSelected) {
+	                console.log(row);
+	                console.log("selected: " + isSelected);
+	            }
+	
+	            return React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    _reactBootstrapTable.BootstrapTable,
+	                    {
+	                        ref: 'table',
+	                        data: surveysCopy,
+	                        striped: true,
+	                        hover: true,
+	                        condensed: true,
+	                        selectRow: selectRowProp,
+	                        options: optionsProp },
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'key', isKey: true, hidden: true },
+	                        'Key'
+	                    ),
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'name', dataSort: true, dataAlign: 'center' },
+	                        'Name'
+	                    ),
+	                    React.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'description', dataAlign: 'center' },
+	                        'Description'
 	                    ),
 	                    React.createElement(
 	                        _reactBootstrapTable.TableHeaderColumn,
@@ -499,19 +1140,19 @@
 	        }
 	    }]);
 	
-	    return SurveyList;
+	    return SubjectList;
 	}(React.Component);
 	
-	var Survey = function (_React$Component3) {
-	    _inherits(Survey, _React$Component3);
+	var Survey = function (_React$Component6) {
+	    _inherits(Survey, _React$Component6);
 	
 	    function Survey(props) {
 	        _classCallCheck(this, Survey);
 	
-	        var _this10 = _possibleConstructorReturn(this, (Survey.__proto__ || Object.getPrototypeOf(Survey)).call(this, props));
+	        var _this16 = _possibleConstructorReturn(this, (Survey.__proto__ || Object.getPrototypeOf(Survey)).call(this, props));
 	
-	        _this10.handleDelete = _this10.handleDelete.bind(_this10);
-	        return _this10;
+	        _this16.handleDelete = _this16.handleDelete.bind(_this16);
+	        return _this16;
 	    }
 	
 	    _createClass(Survey, [{
@@ -543,11 +1184,6 @@
 	                React.createElement(
 	                    'td',
 	                    null,
-	                    this.props.survey.entity.helpText
-	                ),
-	                React.createElement(
-	                    'td',
-	                    null,
 	                    React.createElement(UpdateDialog, { survey: this.props.survey,
 	                        attributes: this.props.attributes,
 	                        onUpdate: this.props.onUpdate })
@@ -566,7 +1202,7 @@
 	                    null,
 	                    React.createElement(
 	                        'a',
-	                        { href: '#AnswerSurvey' },
+	                        { href: '#answerSurvey' },
 	                        React.createElement(
 	                            'button',
 	                            { className: 'btn btn-success' },
@@ -581,27 +1217,27 @@
 	    return Survey;
 	}(React.Component);
 	
-	var UpdateDialog = function (_React$Component4) {
-	    _inherits(UpdateDialog, _React$Component4);
+	var UpdateDialog = function (_React$Component7) {
+	    _inherits(UpdateDialog, _React$Component7);
 	
 	    function UpdateDialog(props) {
 	        _classCallCheck(this, UpdateDialog);
 	
-	        var _this11 = _possibleConstructorReturn(this, (UpdateDialog.__proto__ || Object.getPrototypeOf(UpdateDialog)).call(this, props));
+	        var _this17 = _possibleConstructorReturn(this, (UpdateDialog.__proto__ || Object.getPrototypeOf(UpdateDialog)).call(this, props));
 	
-	        _this11.handleSubmit = _this11.handleSubmit.bind(_this11);
-	        return _this11;
+	        _this17.handleSubmit = _this17.handleSubmit.bind(_this17);
+	        return _this17;
 	    }
 	
 	    _createClass(UpdateDialog, [{
 	        key: 'handleSubmit',
 	        value: function handleSubmit(e) {
-	            var _this12 = this;
+	            var _this18 = this;
 	
 	            e.preventDefault();
 	            var updatedSurvey = {};
 	            this.props.attributes.forEach(function (attribute) {
-	                updatedSurvey[attribute] = ReactDOM.findDOMNode(_this12.refs[attribute]).value.trim();
+	                updatedSurvey[attribute] = ReactDOM.findDOMNode(_this18.refs[attribute]).value.trim();
 	            });
 	            this.props.onUpdate(this.props.survey, updatedSurvey);
 	            window.location = "#";
@@ -609,14 +1245,14 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this13 = this;
+	            var _this19 = this;
 	
 	            var inputs = this.props.attributes.map(function (attribute) {
 	                return React.createElement(
 	                    'p',
-	                    { key: _this13.props.survey.entity[attribute] },
+	                    { key: _this19.props.survey.entity[attribute] },
 	                    React.createElement('input', { type: 'text', placeholder: attribute,
-	                        defaultValue: _this13.props.survey.entity[attribute],
+	                        defaultValue: _this19.props.survey.entity[attribute],
 	                        ref: attribute, className: 'field' })
 	                );
 	            });
@@ -668,8 +1304,8 @@
 	
 	;
 	
-	var TestQuestion = function (_React$Component5) {
-	    _inherits(TestQuestion, _React$Component5);
+	var TestQuestion = function (_React$Component8) {
+	    _inherits(TestQuestion, _React$Component8);
 	
 	    function TestQuestion() {
 	        _classCallCheck(this, TestQuestion);
@@ -700,7 +1336,7 @@
 	                                    null,
 	                                    'Question: '
 	                                ),
-	                                'Which is the best responsive framework to start web designing?'
+	                                'Introduccion a la programacion'
 	                            ),
 	                            React.createElement(
 	                                'div',
@@ -715,9 +1351,8 @@
 	                                        React.createElement(
 	                                            'strong',
 	                                            null,
-	                                            'A.'
-	                                        ),
-	                                        'Bootstrap Framework'
+	                                            '12 a 15'
+	                                        )
 	                                    )
 	                                ),
 	                                React.createElement(
@@ -730,24 +1365,8 @@
 	                                        React.createElement(
 	                                            'strong',
 	                                            null,
-	                                            'B.'
-	                                        ),
-	                                        'Foundation'
-	                                    )
-	                                ),
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'radio' },
-	                                    React.createElement(
-	                                        'label',
-	                                        null,
-	                                        React.createElement('input', { type: 'radio', name: 'group-poll' }),
-	                                        React.createElement(
-	                                            'strong',
-	                                            null,
-	                                            'C.'
-	                                        ),
-	                                        'Kube Framework'
+	                                            '9 a 12'
+	                                        )
 	                                    )
 	                                ),
 	                                React.createElement('hr', null),
@@ -757,7 +1376,7 @@
 	                                    'Result Of User Votes: '
 	                                ),
 	                                React.createElement('hr', null),
-	                                'Bootstrap ( 60% ):',
+	                                '9 a 12 ( 60% ):',
 	                                React.createElement(
 	                                    'div',
 	                                    { className: 'progress progress-striped active' },
@@ -773,7 +1392,7 @@
 	                                        )
 	                                    )
 	                                ),
-	                                'Foundation ( 30% ):',
+	                                '12 a 15 ( 40% ):',
 	                                React.createElement(
 	                                    'div',
 	                                    { className: 'progress progress-striped active' },
@@ -788,23 +1407,6 @@
 	                                            '30% Complete ( success ) '
 	                                        )
 	                                    )
-	                                ),
-	                                'Kube ( 10% ):',
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'progress progress-striped active' },
-	                                    React.createElement(
-	                                        'div',
-	                                        { className: 'progress-bar progress-bar-success',
-	                                            role: 'progressbar', 'aria-valuenow': '10',
-	                                            'aria-valuemin': '0', 'aria-valuemax': '100',
-	                                            style: { width: '10%' } },
-	                                        React.createElement(
-	                                            'span',
-	                                            { className: 'sr-only' },
-	                                            '10% Complete ( success ) '
-	                                        )
-	                                    )
 	                                )
 	                            ),
 	                            React.createElement(
@@ -814,7 +1416,7 @@
 	                                    'a',
 	                                    { href: '#', className: 'btn btn-success btn-sm' },
 	                                    React.createElement('span', { className: 'glyphicon glyphicon-bell' }),
-	                                    ' Mark Your Vote'
+	                                    ' Save answer'
 	                                )
 	                            )
 	                        )
@@ -827,39 +1429,31 @@
 	    return TestQuestion;
 	}(React.Component);
 	
-	var CreateSurvey = function (_React$Component6) {
-	    _inherits(CreateSurvey, _React$Component6);
+	var CreateSurvey = function (_React$Component9) {
+	    _inherits(CreateSurvey, _React$Component9);
 	
 	    function CreateSurvey(props) {
 	        _classCallCheck(this, CreateSurvey);
 	
-	        var _this15 = _possibleConstructorReturn(this, (CreateSurvey.__proto__ || Object.getPrototypeOf(CreateSurvey)).call(this, props));
+	        var _this21 = _possibleConstructorReturn(this, (CreateSurvey.__proto__ || Object.getPrototypeOf(CreateSurvey)).call(this, props));
 	
-	        _this15.state = {
+	        _this21.state = {
 	            showCreateQuestionDialog: false,
 	            newSurvey: { questions: [] }
 	        };
-	        _this15.handleClickCreateQuestion = _this15.handleClickCreateQuestion.bind(_this15);
-	        _this15.onCreate = _this15.onCreate.bind(_this15);
-	        _this15.createSurvey = _this15.createSurvey.bind(_this15);
-	        _this15.createQuestion = _this15.createQuestion.bind(_this15);
-	        _this15.handleNameChange = _this15.handleNameChange.bind(_this15);
-	        _this15.handleDescriptionChange = _this15.handleDescriptionChange.bind(_this15);
-	        _this15.handleHelpChange = _this15.handleHelpChange.bind(_this15);
+	        _this21.handleClickCreateQuestion = _this21.handleClickCreateQuestion.bind(_this21);
+	        _this21.onCreate = _this21.onCreate.bind(_this21);
+	        _this21.createSurvey = _this21.createSurvey.bind(_this21);
+	        _this21.createQuestion = _this21.createQuestion.bind(_this21);
+	        _this21.handleNameChange = _this21.handleNameChange.bind(_this21);
+	        _this21.handleDescriptionChange = _this21.handleDescriptionChange.bind(_this21);
 	
-	        _this15.handleSurveyNameChange = _this15.handleSurveyNameChange.bind(_this15);
-	        _this15.handleSurveyDescriptionChange = _this15.handleSurveyDescriptionChange.bind(_this15);
-	        _this15.handleSurveyHelpChange = _this15.handleSurveyHelpChange.bind(_this15);
-	        _this15.handleMagic = _this15.handleMagic.bind(_this15);
-	        return _this15;
+	        _this21.handleSurveyNameChange = _this21.handleSurveyNameChange.bind(_this21);
+	        _this21.handleSurveyDescriptionChange = _this21.handleSurveyDescriptionChange.bind(_this21);
+	        return _this21;
 	    }
 	
 	    _createClass(CreateSurvey, [{
-	        key: 'handleMagic',
-	        value: function handleMagic(e) {
-	            alert("eeeeaaa");
-	        }
-	    }, {
 	        key: 'handleNameChange',
 	        value: function handleNameChange(e) {
 	            this.setState({ questionName: e.target.value });
@@ -870,11 +1464,6 @@
 	            this.setState({ questionDescription: e.target.value });
 	        }
 	    }, {
-	        key: 'handleHelpChange',
-	        value: function handleHelpChange(e) {
-	            this.setState({ questionHelp: e.target.value });
-	        }
-	    }, {
 	        key: 'handleSurveyNameChange',
 	        value: function handleSurveyNameChange(e) {
 	            this.setState({ surveyName: e.target.value });
@@ -883,11 +1472,6 @@
 	        key: 'handleSurveyDescriptionChange',
 	        value: function handleSurveyDescriptionChange(e) {
 	            this.setState({ surveyDescription: e.target.value });
-	        }
-	    }, {
-	        key: 'handleSurveyHelpChange',
-	        value: function handleSurveyHelpChange(e) {
-	            this.setState({ surveyHelp: e.target.value });
 	        }
 	    }, {
 	        key: 'onCreate',
@@ -910,7 +1494,6 @@
 	
 	            this.state.newSurvey.name = this.state.surveyName;
 	            this.state.newSurvey.description = this.state.surveyDescription;
-	            this.state.newSurvey.helpText = this.state.surveyHelp;
 	
 	            this.onCreate(this.state.newSurvey);
 	
@@ -925,7 +1508,6 @@
 	
 	            newQuestion.questionText = this.state.questionName;
 	            newQuestion.description = this.state.questionDescription;
-	            newQuestion.helpText = this.state.questionHelp;
 	
 	            this.state.newSurvey.questions.push(newQuestion);
 	
@@ -945,7 +1527,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this16 = this;
+	            var _this22 = this;
 	
 	            var questionList = this.state.newSurvey.questions.map(function (q) {
 	                return React.createElement(
@@ -993,17 +1575,6 @@
 	                    ),
 	                    React.createElement(
 	                        'div',
-	                        { className: 'form-group' },
-	                        React.createElement('textarea', { form: 'formi',
-	                            className: 'form-control',
-	                            cols: '35',
-	                            wrap: 'soft',
-	                            name: 'surveyHelp',
-	                            onChange: this.handleSurveyHelpChange,
-	                            placeholder: 'Help' })
-	                    ),
-	                    React.createElement(
-	                        'div',
 	                        { className: 'form-group well' },
 	                        React.createElement(
 	                            'form',
@@ -1014,7 +1585,7 @@
 	                                React.createElement(
 	                                    'button',
 	                                    { onClick: function onClick() {
-	                                            return _this16.refs.simpleDialog.show();
+	                                            return _this22.refs.simpleDialog.show();
 	                                        },
 	                                        className: 'btn btn-info pull-right' },
 	                                    'Add question'
@@ -1055,13 +1626,6 @@
 	                                            React.createElement(
 	                                                'div',
 	                                                { className: 'form-group', style: { padding: '10px' } },
-	                                                React.createElement('textarea', { form: 'formi',
-	                                                    className: 'form-control',
-	                                                    cols: '35',
-	                                                    wrap: 'soft',
-	                                                    name: 'questionHelp',
-	                                                    onChange: this.handleHelpChange,
-	                                                    placeholder: 'HelpText' }),
 	                                                React.createElement(
 	                                                    'div',
 	                                                    { className: 'form-inline', style: { marginTop: '20px' } },
@@ -1113,8 +1677,11 @@
 	    _reactRouter.Router,
 	    { history: _reactRouter.hashHistory },
 	    React.createElement(_reactRouter.Route, { path: '/', component: App }),
-	    React.createElement(_reactRouter.Route, { path: '/AnswerSurvey', component: TestQuestion }),
-	    React.createElement(_reactRouter.Route, { path: '/createSurvey', component: CreateSurvey })
+	    React.createElement(_reactRouter.Route, { path: '/createSurvey', component: CreateSurvey }),
+	    React.createElement(_reactRouter.Route, { path: '/careers', component: CareerList }),
+	    React.createElement(_reactRouter.Route, { path: '/subjects', component: SubjectList }),
+	    React.createElement(_reactRouter.Route, { path: '/question', component: TestQuestion }),
+	    React.createElement(_reactRouter.Route, { path: '/:key', name: 'answerSurvey', component: QuestionList })
 	), document.getElementById('react'));
 
 /***/ },

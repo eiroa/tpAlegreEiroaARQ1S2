@@ -10,11 +10,12 @@ const follow = require( './follow' );// function to hop multiple links by "rel"
 // existen dos sintaxis para importar, el formato clasico ES5 impuesto por Node,  con require,
 // y el formato moderno que propone React utilizando la especificacion ES6, import
 // Se usan ambos solo a fines demostrativos
-import { Router, Route, hashHistory } from 'react-router';
+import { Router, Route, hashHistory, Link } from 'react-router';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import {ListGroup, ListGroupItem} from 'react-bootstrap';
 import SkyLight from 'react-skylight';
 import Confirm from 'react-confirm-bootstrap';
+
 //IMPORTANTE:
 
 /*
@@ -30,7 +31,7 @@ class App extends React.Component {// creamos un componente de REACT
 
     constructor( props ) {
         super( props );
-        this.state = { surveys: [], attributes: [], pageSize: 2, links: {} };
+        this.state = { surveys: [], attributes: [], pageSize: 2, links: {}, key:"" };
         this.updatePageSize = this.updatePageSize.bind( this );
         this.onCreate = this.onCreate.bind( this );
         this.onUpdate = this.onUpdate.bind( this );
@@ -169,6 +170,7 @@ class App extends React.Component {// creamos un componente de REACT
             <div>
                 <SurveyList surveys={this.state.surveys}
                     links={this.state.links}
+                    key={this.state.key}
                     attributes={this.state.attributes}
                     pageSize={this.state.pageSize}
                     onNavigate={this.onNavigate}
@@ -184,6 +186,521 @@ class App extends React.Component {// creamos un componente de REACT
 
 
 class SurveyList extends React.Component { // definimos la estructura de una lista de encuestas
+
+    constructor( props ) {
+        super( props );
+        this.handleNavFirst = this.handleNavFirst.bind( this );
+        this.handleNavPrev = this.handleNavPrev.bind( this );
+        this.handleNavNext = this.handleNavNext.bind( this );
+        this.handleNavLast = this.handleNavLast.bind( this );
+        this.handleInput = this.handleInput.bind( this );
+        this.handleDelete = this.handleDelete.bind( this );
+        this.handleAnswer = this.handleAnswer.bind(this);
+    }
+    
+
+    handleInput( e ) {
+        e.preventDefault();
+        var pageSize = ReactDOM.findDOMNode( this.refs.pageSize ).value;
+        if ( /^[0-9]+$/.test( pageSize ) ) {
+            this.props.updatePageSize( pageSize );
+        } else {
+            ReactDOM.findDOMNode( this.refs.pageSize ).value = pageSize.substring( 0, pageSize.length - 1 );
+        }
+    }
+    
+    handleAnswer(e){
+        e.preventDefault();
+        
+        
+        if(this.refs.table.state.selectedRowKeys[0] != null){
+            var key =this.refs.table.state.selectedRowKeys[0];
+            window.location = "#answerSurvey?key="+key;
+        
+       }
+        
+    }
+    
+    
+    handleDelete() {
+        if(this.refs.table.state.selectedRowKeys[0] != null){
+             this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+         
+        }
+        
+    }
+
+    handleNavFirst( e ) {
+        e.preventDefault();
+        this.props.onNavigate( this.props.links.first.href );
+    }
+
+    handleNavPrev( e ) {
+        e.preventDefault();
+        this.props.onNavigate( this.props.links.prev.href );
+    }
+
+    handleNavNext( e ) {
+        e.preventDefault();
+        this.props.onNavigate( this.props.links.next.href );
+    }
+
+    handleNavLast( e ) {
+        e.preventDefault();
+        this.props.onNavigate( this.props.links.last.href );
+    }
+    
+
+    render() {
+        
+        
+        var surveysCopy = this.props.surveys.map ( 
+                function(s){ 
+                    return  {key:s.entity._links.self.href,
+                        name: s.entity.name,
+                        description: s.entity.description,
+                        entity: s.entity
+                     }
+                });
+        
+        var surveys = this.props.surveys.map( survey =>
+            <Survey key={survey.entity._links.self.href}
+                survey={survey}
+                attributes={this.props.attributes}
+                onUpdate={this.props.onUpdate}
+                onDelete={this.props.onDelete}
+                onDeleteDirect={this.props.onDeleteDirect}/>
+            
+        );
+        
+        var keyRow = {key: ""};
+        
+        var getRow = function(){
+            return keyRow;
+        }
+        
+        var but =<div>    
+        <Confirm
+        onConfirm={this.handleDelete}
+        body="Are you sure you want to delete this survey?"
+        confirmText="Confirm Delete"
+        title="Deleting">
+        <button className="btn btn-danger">Delete</button>
+    </Confirm> 
+    <button  style={{marginLeft:'5px'}} onClick={this.handleAnswer} className="btn btn-success"> Answer </button> 
+ </div>
+        
+        
+        function actionsFormatter(cell, row){
+            keyRow.key = row.key;
+            return but
+          }
+        
+        
+        var navLinks = [];
+        if ( "last" in this.props.links ) {
+            navLinks.push( <button  className="btn btn-primary pull-right" key="last" onClick={this.handleNavLast}><span className="glyphicon glyphicon-forward"/> </button> );
+        }
+        
+        if ( "next" in this.props.links ) {
+            navLinks.push( <button  className="btn btn-primary pull-right" key="next" onClick={this.handleNavNext}><span className="glyphicon glyphicon-triangle-right"/> </button> );
+        }
+        
+        if ( "prev" in this.props.links ) {
+            navLinks.push( <button className="btn btn-primary pull-right" key="prev" onClick={this.handleNavPrev}><span className="glyphicon glyphicon-triangle-left" /> </button> );
+        }
+       
+        
+        if ( "first" in this.props.links ) {
+            navLinks.push( <button  className="btn btn-primary pull-right" key="first" onClick={this.handleNavFirst}><span className="glyphicon glyphicon-backward"/></button> );
+        }
+        var selectRowProp = {
+                mode: "radio", // or checkbox
+                clickToSelect: true,
+                bgColor: "rgb(208, 193, 213)",
+                onSelect: onRowSelect
+              };
+        
+        var optionsProp = {
+                onDeleteRow : this.handleDelete,
+                deleteText : "destroy"
+              };
+        
+
+        function onRowSelect(row, isSelected){
+            console.log(row);
+            console.log("selected: " + isSelected)
+            keyRow.key = row.key;
+          }
+        
+        function getRowKey(){
+            return this.refs.table.state.selectedRowKeys[0];
+        }
+
+        return (
+            <div >
+               
+                
+            <BootstrapTable 
+            ref="table"
+            data={surveysCopy} 
+            striped={true} 
+            hover={true} 
+            condensed={true} 
+            selectRow={selectRowProp}
+            options={optionsProp}>
+                <TableHeaderColumn dataField="key" isKey={true} hidden={true} >Key</TableHeaderColumn>
+                <TableHeaderColumn dataField="name"  dataSort={true} dataAlign="center">Name</TableHeaderColumn>
+                <TableHeaderColumn dataFormat={actionsFormatter} dataAlign="center">Actions</TableHeaderColumn>
+            </BootstrapTable>
+            
+           <div>
+                    
+                
+            <div className="form-inline" style={{padding:'10px'}}>
+                Page size
+                <input ref="pageSize"
+                    type="number"
+                    min="1" max="50" step="1" 
+                    className="form-control"
+                    name="pagination"
+                    onInput={this.handleInput}
+                    defaultValue={this.props.pageSize}
+                    ></input>
+                    {navLinks}
+            </div>
+            
+                </div>
+            </div>
+        )
+    }
+}
+
+
+
+class QuestionList extends React.Component { // definimos la estructura de una lista de encuestas
+
+        constructor( props ) {
+                    super( props );
+                    this.state = { questions: []};
+                    this.handleNavFirst = this.handleNavFirst.bind( this );
+                    this.handleNavPrev = this.handleNavPrev.bind( this );
+                    this.handleNavNext = this.handleNavNext.bind( this );
+                    this.handleNavLast = this.handleNavLast.bind( this );
+                    this.handleInput = this.handleInput.bind( this );
+                    this.handleDelete = this.handleDelete.bind( this );
+                    this.loadSurvey = this.loadSurvey.bind(this);
+                    this.handleAnswer = this.handleAnswer.bind(this);
+                }
+                
+        componentDidMount() { // que hacer al momento de haber cargado el componente,  se relaciona con el ciclo de vida del objeto DOM
+            this.loadSurvey( this.props.location.query.key );
+        }
+                loadSurvey(key ) {
+                    client( {
+                        method: 'GET',
+                        path: key
+                    }).then( response => {
+                        this.setState( {
+                            survey: response.entity,
+                            questions : response.entity.questions
+                        });
+                    });
+                }
+                
+                handleAnswer(e){
+                    e.preventDefault();
+                    
+                        window.location = "#question";
+                    
+                }
+                
+                handleInput( e ) {
+                    e.preventDefault();
+                    var pageSize = ReactDOM.findDOMNode( this.refs.pageSize ).value;
+                    if ( /^[0-9]+$/.test( pageSize ) ) {
+                        this.props.updatePageSize( pageSize );
+                    } else {
+                        ReactDOM.findDOMNode( this.refs.pageSize ).value = pageSize.substring( 0, pageSize.length - 1 );
+                    }
+                }
+                
+                handleDelete() {
+                    if(this.refs.table.state.selectedRowKeys[0] != null){
+                         this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+                     
+                    }
+                    
+                }
+
+                handleNavFirst( e ) {
+                    e.preventDefault();
+                    this.props.onNavigate( this.props.links.first.href );
+                }
+
+                handleNavPrev( e ) {
+                    e.preventDefault();
+                    this.props.onNavigate( this.props.links.prev.href );
+                }
+
+                handleNavNext( e ) {
+                    e.preventDefault();
+                    this.props.onNavigate( this.props.links.next.href );
+                }
+
+                handleNavLast( e ) {
+                    e.preventDefault();
+                    this.props.onNavigate( this.props.links.last.href );
+                }
+                
+
+                render() {
+                    
+                    
+                    
+                    var but =<div>    
+                <button  style={{marginLeft:'5px'}} className="btn btn-success" onClick={this.handleAnswer}> Answer question</button> 
+             </div>
+                    
+                    
+                    function actionsFormatter(cell, row){
+                        return but
+                      }
+                    
+                    
+                    var questions = 
+                            this.state.questions.map ( 
+                                    function(q,i){ 
+                                        return  {key:i,
+                                            name:q.questionText,
+                                            options: q.options
+                                        
+                                         }
+                                    });
+                        
+                        
+                    
+                    
+                    var navLinks = [];
+                    var selectRowProp = {
+                            mode: "radio", // or checkbox
+                            clickToSelect: true,
+                            bgColor: "rgb(238, 193, 213)",
+                            onSelect: onRowSelect
+                          };
+                    
+                    var optionsProp = {
+                            onDeleteRow : this.handleDelete,
+                            deleteText : "destroy"
+                          };
+                    
+                    function onRowSelect(row, isSelected){
+                        console.log(row);
+                        console.log("selected: " + isSelected)
+                      }
+
+
+
+                    return (
+                        <div >
+                           
+                        <BootstrapTable 
+                        ref="table"
+                        data={questions} 
+                        striped={true} 
+                        hover={true} 
+                        condensed={true}
+                        >
+                            <TableHeaderColumn dataField="key" isKey={true} hidden={true}>Key</TableHeaderColumn>
+                            <TableHeaderColumn dataField="name" >Question</TableHeaderColumn>
+                            <TableHeaderColumn dataFormat={actionsFormatter} dataAlign="center">Actions</TableHeaderColumn>
+                        </BootstrapTable>
+                       
+                       <div>
+                                
+                            </div>
+                        </div>
+                    )
+                }
+            }
+            
+
+class CareerList extends React.Component { // definimos la estructura de una lista de encuestas
+
+    constructor( props ) {
+        super( props );
+        this.handleNavFirst = this.handleNavFirst.bind( this );
+        this.handleNavPrev = this.handleNavPrev.bind( this );
+        this.handleNavNext = this.handleNavNext.bind( this );
+        this.handleNavLast = this.handleNavLast.bind( this );
+        this.handleInput = this.handleInput.bind( this );
+        this.handleDelete = this.handleDelete.bind( this );
+    }
+    
+
+    handleInput( e ) {
+        e.preventDefault();
+        var pageSize = ReactDOM.findDOMNode( this.refs.pageSize ).value;
+        if ( /^[0-9]+$/.test( pageSize ) ) {
+            this.props.updatePageSize( pageSize );
+        } else {
+            ReactDOM.findDOMNode( this.refs.pageSize ).value = pageSize.substring( 0, pageSize.length - 1 );
+        }
+    }
+    
+    handleDelete() {
+        if(this.refs.table.state.selectedRowKeys[0] != null){
+             this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+         
+        }
+        
+    }
+
+    handleNavFirst( e ) {
+        e.preventDefault();
+        this.props.onNavigate( this.props.links.first.href );
+    }
+
+    handleNavPrev( e ) {
+        e.preventDefault();
+        this.props.onNavigate( this.props.links.prev.href );
+    }
+
+    handleNavNext( e ) {
+        e.preventDefault();
+        this.props.onNavigate( this.props.links.next.href );
+    }
+
+    handleNavLast( e ) {
+        e.preventDefault();
+        this.props.onNavigate( this.props.links.last.href );
+    }
+    
+
+    render() {
+        
+        var currentRow = null;
+        
+        var buttonDelete = <Confirm
+        onConfirm={this.handleDelete}
+        body="Are you sure you want to delete this survey?"
+        confirmText="Confirm Delete"
+        title="Deleting">
+        <button className="btn btn-danger">Delete</button>
+        </Confirm>
+    
+    var buttonAnswer  =  <a href="#answerSurvey">
+    <button  style={{padding:'5px;'}}className="btn btn-success"> Answer </button> </a>
+        
+        var surveysCopy = this.props.surveys.map ( 
+                function(s){ 
+                    return  {key:s.entity._links.self.href,
+                        name: s.entity.name,
+                        description: s.entity.description,
+                        entity: s.entity,
+                        deleteFunction: function(){return this.props.onDeleteDirect}
+                     }
+                });
+        var surveys = this.props.surveys.map( survey =>
+            <Survey key={survey.entity._links.self.href}
+                survey={survey}
+                attributes={this.props.attributes}
+                onUpdate={this.props.onUpdate}
+                onDelete={this.props.onDelete}
+                onDeleteDirect={this.props.onDeleteDirect}/>
+            
+        );
+        
+        function actionsFormatter(cell, row){
+            return <div>buttonDelete buttonAnswer</div>
+          }
+        
+        
+        function answerFormatter(cell, row){
+            return <a href="#answerSurvey">
+            <button  className="btn btn-success">Answer Survey</button>
+            </a>
+          }
+        var navLinks = [];
+        if ( "last" in this.props.links ) {
+            navLinks.push( <button  className="btn btn-primary pull-right" key="last" onClick={this.handleNavLast}><span className="glyphicon glyphicon-forward"/> </button> );
+        }
+        
+        if ( "next" in this.props.links ) {
+            navLinks.push( <button  className="btn btn-primary pull-right" key="next" onClick={this.handleNavNext}><span className="glyphicon glyphicon-triangle-right"/> </button> );
+        }
+        
+        if ( "prev" in this.props.links ) {
+            navLinks.push( <button className="btn btn-primary pull-right" key="prev" onClick={this.handleNavPrev}><span className="glyphicon glyphicon-triangle-left" /> </button> );
+        }
+       
+        
+        if ( "first" in this.props.links ) {
+            navLinks.push( <button  className="btn btn-primary pull-right" key="first" onClick={this.handleNavFirst}><span className="glyphicon glyphicon-backward"/></button> );
+        }
+        var selectRowProp = {
+                mode: "radio", // or checkbox
+                clickToSelect: true,
+                bgColor: "rgb(238, 193, 213)",
+                onSelect: onRowSelect
+              };
+        
+        var optionsProp = {
+                onDeleteRow : this.handleDelete,
+                deleteText : "destroy"
+              };
+        
+        function onRowSelect(row, isSelected){
+            console.log(row);
+            console.log("selected: " + isSelected)
+          }
+
+
+
+        return (
+            <div >
+               
+                
+            <BootstrapTable 
+            ref="table"
+            data={surveysCopy} 
+            striped={true} 
+            hover={true} 
+            condensed={true} 
+            selectRow={selectRowProp}
+            options={optionsProp}>
+                <TableHeaderColumn dataField="key" isKey={true} hidden={true} >Key</TableHeaderColumn>
+                <TableHeaderColumn dataField="name"  dataSort={true} dataAlign="center">Name</TableHeaderColumn>
+                <TableHeaderColumn dataField="description" dataAlign="center">Description</TableHeaderColumn>
+                <TableHeaderColumn dataFormat={actionsFormatter} dataAlign="center">Actions</TableHeaderColumn>
+            </BootstrapTable>
+            
+           
+           <div>
+                    
+                
+            <div className="form-inline" style={{padding:'10px'}}>
+                Page size
+                <input ref="pageSize"
+                    type="number"
+                    min="1" max="50" step="1" 
+                    className="form-control"
+                    name="pagination"
+                    onInput={this.handleInput}
+                    defaultValue={this.props.pageSize}
+                    ></input>
+                    {navLinks}
+            </div>
+            
+                </div>
+            </div>
+        )
+    }
+}
+            
+
+
+class SubjectList extends React.Component { // definimos la estructura de una lista de encuestas
 
     constructor( props ) {
         super( props );
@@ -252,7 +769,6 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
                     return  {key:s.entity._links.self.href,
                         name: s.entity.name,
                         description: s.entity.description,
-                        helpText:s.entity.helpText,
                         entity: s.entity,
                         deleteFunction: function(){return this.props.onDeleteDirect}
                      }
@@ -273,7 +789,7 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         
         
         function answerFormatter(cell, row){
-            return <a href="#AnswerSurvey">
+            return <a href="#answerSurvey">
             <button  className="btn btn-success">Answer Survey</button>
             </a>
           }
@@ -328,7 +844,6 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
                 <TableHeaderColumn dataField="key" isKey={true} hidden={true} >Key</TableHeaderColumn>
                 <TableHeaderColumn dataField="name"  dataSort={true} dataAlign="center">Name</TableHeaderColumn>
                 <TableHeaderColumn dataField="description" dataAlign="center">Description</TableHeaderColumn>
-                <TableHeaderColumn dataField="helpText" dataAlign="center">Help Text</TableHeaderColumn>
                 <TableHeaderColumn dataFormat={deleteFormatter} dataAlign="center">Actions</TableHeaderColumn>
                 <TableHeaderColumn dataFormat={answerFormatter} dataAlign="center"  width="130">Actions</TableHeaderColumn>
             </BootstrapTable>
@@ -379,7 +894,6 @@ class Survey extends React.Component {
             <tr>
                 <td>{this.props.survey.entity.name}</td>
                 <td>{this.props.survey.entity.description}</td>
-                <td>{this.props.survey.entity.helpText}</td>
                 <td>
                     <UpdateDialog survey={this.props.survey}
                         attributes={this.props.attributes}
@@ -387,7 +901,7 @@ class Survey extends React.Component {
                 </td>
                 <td><button onClick={this.handleDelete} className="btn btn-danger">Delete</button></td>
 
-                <td><a href="#AnswerSurvey"><button className="btn btn-success">Answer Survey</button></a></td>
+                <td><a href="#answerSurvey"><button className="btn btn-success">Answer Survey</button></a></td>
             </tr>
         )
     }
@@ -453,32 +967,27 @@ class TestQuestion extends React.Component {
                     <div className="user-poll-section">
                         <div className="panel panel-default">
                             <div className="panel-heading">
-                                <strong>Question: </strong>Which is the best responsive framework to start web designing?
+                                <strong>Question: </strong>Introduccion a la programacion
 
                             </div>
                             <div className="panel-body">
                                 <div className="radio">
                                     <label>
                                         <input type="radio" name="group-poll"/>
-                                        <strong>A.</strong>Bootstrap Framework
+                                        <strong>12 a 15</strong>
                                     </label>
                                 </div>
                                 <div className="radio">
                                     <label>
                                         <input type="radio" name="group-poll"/>
-                                        <strong>B.</strong>Foundation
+                                        <strong>9 a 12</strong>
                                     </label>
                                 </div>
-                                <div className="radio">
-                                    <label>
-                                        <input type="radio" name="group-poll"/>
-                                        <strong>C.</strong>Kube Framework
-                                    </label>
-                                </div>
+                                
                                 <hr />
                                 <h5 className="text-danger">Result Of User Votes: </h5>
                                 <hr />
-                                Bootstrap ( 60% ):
+                                9 a 12 ( 60% ):
                                 <div className="progress progress-striped active">
                                     <div className="progress-bar progress-bar-danger"
                                         role="progressbar" aria-valuenow="60"
@@ -486,7 +995,7 @@ class TestQuestion extends React.Component {
                                         <span className="sr-only">60% Complete ( success ) </span>
                                     </div>
                                 </div>
-                                Foundation ( 30% ):
+                                12 a 15 ( 40% ):
                                 <div className="progress progress-striped active">
                                     <div className="progress-bar progress-bar-warning"
                                         role="progressbar" aria-valuenow="30"
@@ -494,19 +1003,10 @@ class TestQuestion extends React.Component {
                                         <span className="sr-only">30% Complete ( success ) </span>
                                     </div>
                                 </div>
-                                Kube ( 10% ):
-                                <div className="progress progress-striped active">
-                                    <div className="progress-bar progress-bar-success"
-                                        role="progressbar" aria-valuenow="10"
-                                        aria-valuemin="0" aria-valuemax="100"
-                                        style={{ width: '10%' }} >
-                                        <span className="sr-only">10% Complete ( success ) </span>
-                                    </div>
-                                </div>
                             </div>
                             <div className="panel-footer">
                                 <a href="#" className="btn btn-success btn-sm">
-                                    <span className="glyphicon glyphicon-bell"></span> Mark Your Vote</a>
+                                    <span className="glyphicon glyphicon-bell"></span> Save answer</a>
                             </div>
                         </div>
 
@@ -534,18 +1034,12 @@ class CreateSurvey extends React.Component {
         this.createQuestion = this.createQuestion.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-        this.handleHelpChange = this.handleHelpChange.bind(this);
         
         this.handleSurveyNameChange = this.handleSurveyNameChange.bind(this);
         this.handleSurveyDescriptionChange = this.handleSurveyDescriptionChange.bind(this);
-        this.handleSurveyHelpChange = this.handleSurveyHelpChange.bind(this);
-        this.handleMagic = this.handleMagic.bind(this);
     }
     
     
-    handleMagic(e){
-        alert("eeeeaaa");
-     }
     
     
     handleNameChange(e){
@@ -556,9 +1050,6 @@ class CreateSurvey extends React.Component {
         this.setState({questionDescription: e.target.value});
      }
     
-    handleHelpChange(e){
-        this.setState({questionHelp: e.target.value});
-     }
     
     handleSurveyNameChange(e){
         this.setState({surveyName: e.target.value});
@@ -568,9 +1059,6 @@ class CreateSurvey extends React.Component {
         this.setState({surveyDescription: e.target.value});
      }
     
-    handleSurveyHelpChange(e){
-        this.setState({surveyHelp: e.target.value});
-     }
     
     onCreate( newSurvey ) {
         follow( client, root, ['surveys'] ).then( surveyCollection => {
@@ -592,7 +1080,6 @@ class CreateSurvey extends React.Component {
         
         this.state.newSurvey.name = this.state.surveyName;
         this.state.newSurvey.description = this.state.surveyDescription;
-        this.state.newSurvey.helpText = this.state.surveyHelp;
         
         this.onCreate( this.state.newSurvey );
 
@@ -608,7 +1095,6 @@ class CreateSurvey extends React.Component {
         
         newQuestion.questionText = this.state.questionName;
         newQuestion.description = this.state.questionDescription;
-        newQuestion.helpText = this.state.questionHelp;
         
         this.state.newSurvey.questions.push(newQuestion);
 
@@ -659,16 +1145,6 @@ class CreateSurvey extends React.Component {
 
                     </div>
                     
-                    <div className="form-group">
-                    <textarea form ="formi"
-                        className="form-control"
-                        cols="35"
-                        wrap="soft"
-                        name="surveyHelp" 
-                            onChange={this.handleSurveyHelpChange}
-                        placeholder="Help"></textarea>
-
-                </div>
 
                     <div className="form-group well">
                         <form className="form-inline" role="form" style={{ padding: '10px' }} name="urlForm">
@@ -706,13 +1182,6 @@ class CreateSurvey extends React.Component {
                                     </div>
                                     
                                     <div className="form-group" style={{padding:'10px'}}>
-                                    <textarea form ="formi"
-                                        className="form-control"
-                                        cols="35"
-                                        wrap="soft"
-                                        name="questionHelp"
-                                            onChange={this.handleHelpChange}
-                                        placeholder="HelpText"></textarea>
                                         
                                         <div className="form-inline" style={{marginTop:'20px'}}>
                                         <button 
@@ -755,8 +1224,12 @@ ReactDOM.render(
     (
         <Router history={hashHistory}>
             <Route path="/" component={App}/>
-            <Route path="/AnswerSurvey" component={TestQuestion}/>
             <Route path="/createSurvey" component={CreateSurvey}/>
+            <Route path="/careers" component={CareerList}/>
+            <Route path="/subjects" component={SubjectList}/>
+            <Route path="/question" component={TestQuestion}/>
+            <Route path="/:key" name="answerSurvey" component={QuestionList} />
+            
         </Router>
     ),
     document.getElementById( 'react' )
