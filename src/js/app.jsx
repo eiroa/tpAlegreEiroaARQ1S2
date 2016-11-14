@@ -14,6 +14,7 @@ import { Router, Route, hashHistory } from 'react-router';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import {ListGroup, ListGroupItem} from 'react-bootstrap';
 import SkyLight from 'react-skylight';
+import Confirm from 'react-confirm-bootstrap';
 //IMPORTANTE:
 
 /*
@@ -34,7 +35,14 @@ class App extends React.Component {// creamos un componente de REACT
         this.onCreate = this.onCreate.bind( this );
         this.onUpdate = this.onUpdate.bind( this );
         this.onDelete = this.onDelete.bind( this );
+        this.onDeleteDirect = this.onDeleteDirect.bind( this );
         this.onNavigate = this.onNavigate.bind( this );
+        this.handleCreate = this.handleCreate.bind( this );
+    }
+    
+    handleCreate( e ) {
+        e.preventDefault();
+        window.location = "#createSurvey";
     }
 
     loadFromServer( pageSize ) {
@@ -108,6 +116,12 @@ class App extends React.Component {// creamos un componente de REACT
             this.loadFromServer( this.state.pageSize );
         });
     }
+    
+    onDeleteDirect(link){
+        client( { method: 'DELETE', path: link }).then( response => {
+            this.loadFromServer( this.state.pageSize );
+        });
+    }
 
     updatePageSize( pageSize ) {
         if ( pageSize !== this.state.pageSize ) {
@@ -148,21 +162,25 @@ class App extends React.Component {// creamos un componente de REACT
 
     render() {
         return (
+          <div>
+              <div style={{padding:'10px'}}>
+                <button className="btn btn-success" onClick={this.handleCreate}> Create new survey</button>
+              </div>
             <div>
-                <CreateDialog attributes={this.state.attributes} onCreate={this.onCreate}/>
                 <SurveyList surveys={this.state.surveys}
                     links={this.state.links}
                     attributes={this.state.attributes}
                     pageSize={this.state.pageSize}
                     onNavigate={this.onNavigate}
                     onDelete={this.onDelete}
+                    onDeleteDirect={this.onDeleteDirect}
                     onUpdate={this.onUpdate}
                     updatePageSize={this.updatePageSize}/>
             </div>
+                </div>
         )
     }
 }
-
 
 
 class SurveyList extends React.Component { // definimos la estructura de una lista de encuestas
@@ -176,8 +194,8 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         this.handleInput = this.handleInput.bind( this );
         this.handleDelete = this.handleDelete.bind( this );
     }
+    
 
-    // tag::handle-page-size-updates[]
     handleInput( e ) {
         e.preventDefault();
         var pageSize = ReactDOM.findDOMNode( this.refs.pageSize ).value;
@@ -188,14 +206,14 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         }
     }
     
-    handleDelete(survey) {
-        this.props.onDelete( survey );
+    handleDelete() {
+        if(this.refs.table.state.selectedRowKeys[0] != null){
+             this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+         
+        }
+        
     }
-    
-    
-    // end::handle-page-size-updates[]
 
-    // tag::handle-nav[]
     handleNavFirst( e ) {
         e.preventDefault();
         this.props.onNavigate( this.props.links.first.href );
@@ -216,24 +234,18 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         this.props.onNavigate( this.props.links.last.href );
     }
     
-    
-    // end::handle-nav[]
-  
-    alertMessage() {
-        alert("hello!");
-    }
-
 
     render() {
         
-       
+        var currentRow = null;
         
-        var deleteClick = function(row) {
-            console.log("deleteShouldGoHere");
-        }
-        var answerClick = function(row) {
-            console.log("go Answer should go here");
-        }
+        var buttonDelete = <Confirm
+        onConfirm={this.handleDelete}
+        body="Are you sure you want to delete this survey?"
+        confirmText="Confirm Delete"
+        title="Deleting">
+        <button className="btn btn-danger">Delete</button>
+    </Confirm>
         
         var surveysCopy = this.props.surveys.map ( 
                 function(s){ 
@@ -241,58 +253,103 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
                         name: s.entity.name,
                         description: s.entity.description,
                         helpText:s.entity.helpText,
-                        entity: s.entity}
-                    });
+                        entity: s.entity,
+                        deleteFunction: function(){return this.props.onDeleteDirect}
+                     }
+                });
         var surveys = this.props.surveys.map( survey =>
             <Survey key={survey.entity._links.self.href}
                 survey={survey}
                 attributes={this.props.attributes}
                 onUpdate={this.props.onUpdate}
-                onDelete={this.props.onDelete}/>
+                onDelete={this.props.onDelete}
+                onDeleteDirect={this.props.onDeleteDirect}/>
             
         );
         
         function deleteFormatter(cell, row){
-            return <button onClick={deleteClick(row)} className="btn btn-danger">Delete</button>
-            ;
+            return buttonDelete;
           }
+        
         
         function answerFormatter(cell, row){
             return <a href="#AnswerSurvey">
-            <button onClick={answerClick(row)} className="btn btn-success">Answer Survey</button>
+            <button  className="btn btn-success">Answer Survey</button>
             </a>
           }
-
         var navLinks = [];
-        if ( "first" in this.props.links ) {
-            navLinks.push( <button key="first" onClick={this.handleNavFirst}>&lt; &lt; </button> );
-        }
-        if ( "prev" in this.props.links ) {
-            navLinks.push( <button key="prev" onClick={this.handleNavPrev}>&lt; </button> );
-        }
-        if ( "next" in this.props.links ) {
-            navLinks.push( <button key="next" onClick={this.handleNavNext}>&gt; </button> );
-        }
         if ( "last" in this.props.links ) {
-            navLinks.push( <button key="last" onClick={this.handleNavLast}>&gt; &gt; </button> );
+            navLinks.push( <button  className="btn btn-primary pull-right" key="last" onClick={this.handleNavLast}><span className="glyphicon glyphicon-forward"/> </button> );
         }
+        
+        if ( "next" in this.props.links ) {
+            navLinks.push( <button  className="btn btn-primary pull-right" key="next" onClick={this.handleNavNext}><span className="glyphicon glyphicon-triangle-right"/> </button> );
+        }
+        
+        if ( "prev" in this.props.links ) {
+            navLinks.push( <button className="btn btn-primary pull-right" key="prev" onClick={this.handleNavPrev}><span className="glyphicon glyphicon-triangle-left" /> </button> );
+        }
+       
+        
+        if ( "first" in this.props.links ) {
+            navLinks.push( <button  className="btn btn-primary pull-right" key="first" onClick={this.handleNavFirst}><span className="glyphicon glyphicon-backward"/></button> );
+        }
+        var selectRowProp = {
+                mode: "radio", // or checkbox
+                clickToSelect: true,
+                bgColor: "rgb(238, 193, 213)",
+                onSelect: onRowSelect
+              };
+        
+        var optionsProp = {
+                onDeleteRow : this.handleDelete,
+                deleteText : "destroy"
+              };
+        
+        function onRowSelect(row, isSelected){
+            console.log(row);
+            console.log("selected: " + isSelected)
+          }
+
+
 
         return (
-            <div>
-                <input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>
+            <div >
+               
                 
-              <BootstrapTable data={surveysCopy} striped={true} hover={true} condensed={true} >
-                <TableHeaderColumn dataField="name" isKey={true} dataSort={true} dataAlign="center">Name</TableHeaderColumn>
+            <BootstrapTable 
+            ref="table"
+            data={surveysCopy} 
+            striped={true} 
+            hover={true} 
+            condensed={true} 
+            selectRow={selectRowProp}
+            options={optionsProp}>
+                <TableHeaderColumn dataField="key" isKey={true} hidden={true} >Key</TableHeaderColumn>
+                <TableHeaderColumn dataField="name"  dataSort={true} dataAlign="center">Name</TableHeaderColumn>
                 <TableHeaderColumn dataField="description" dataAlign="center">Description</TableHeaderColumn>
                 <TableHeaderColumn dataField="helpText" dataAlign="center">Help Text</TableHeaderColumn>
-                <TableHeaderColumn dataFormat={deleteFormatter}>Actions</TableHeaderColumn>
-                <TableHeaderColumn dataFormat={answerFormatter}>Actions</TableHeaderColumn>
-               
+                <TableHeaderColumn dataFormat={deleteFormatter} dataAlign="center">Actions</TableHeaderColumn>
+                <TableHeaderColumn dataFormat={answerFormatter} dataAlign="center"  width="130">Actions</TableHeaderColumn>
             </BootstrapTable>
             
            
-                <div>
+           <div>
+                    
+                
+            <div className="form-inline" style={{padding:'10px'}}>
+                Page size
+                <input ref="pageSize"
+                    type="number"
+                    min="1" max="50" step="1" 
+                    className="form-control"
+                    name="pagination"
+                    onInput={this.handleInput}
+                    defaultValue={this.props.pageSize}
+                    ></input>
                     {navLinks}
+            </div>
+            
                 </div>
             </div>
         )
@@ -334,36 +391,6 @@ class Survey extends React.Component {
             </tr>
         )
     }
-}
-
-class CreateDialog extends React.Component {
-
-    constructor( props ) {
-        super( props );
-        this.handleSubmit = this.handleSubmit.bind( this );
-    }
-
-    handleSubmit( e ) {
-        e.preventDefault();
-
-        // Navigate away from the dialog to hide it.
-        window.location = "#createSurvey";
-    }
-
-    render() {
-        var inputs = this.props.attributes.map( attribute =>
-            <p key={attribute}>
-                <input type="text" placeholder={attribute} ref={attribute} className="field" />
-            </p>
-        );
-
-        return (
-            <div style={{padding:'10px'}}>
-                <button className="btn btn-success" onClick={this.handleSubmit}> Create new survey</button>
-            </div>
-        )
-    }
-
 }
 
 
