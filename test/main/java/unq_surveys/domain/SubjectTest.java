@@ -1,4 +1,4 @@
-package main.java.unq_surveys.domain;
+package unq_surveys.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

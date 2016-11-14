@@ -35,5 +35,21 @@ public class Subject {
 
 	public int numberOfCourses() {
 		return courses.size();
-	}		
+	}
+
+
+	public String getId() {
+		return id;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public List<Course> getCourses() {
+		return courses;
+	}
+	
 }

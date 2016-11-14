@@ -32,5 +32,12 @@ public class Course {
 	public void addSchedule(Schedule aSchedule){
 		schedules.add(aSchedule);
 	}
-	
+
+	public int getQuota() {
+		return quota;
+	}
+
+	public List<Schedule> getSchedules() {
+		return schedules;
+	}
 }

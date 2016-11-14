@@ -37,5 +37,26 @@ public class Question {
 		public Question(){
 			
 		}
+
+		public Question(String questionText) {
+			this.questionText = questionText;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public String getQuestionText() {
+			return questionText;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public String getHelpText() {
+			return helpText;
+		}
+			
 }
 

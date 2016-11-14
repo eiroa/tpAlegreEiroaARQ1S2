@@ -1,4 +1,4 @@
-package main.java.unq_surveys.domain;
+package unq_surveys.domain;
 
 
 import static org.junit.Assert.assertEquals;
@@ -14,10 +14,10 @@ public class ScheduleTest {
 
 	@Test
 	public void testScheduleIsCreatedProperly() {
-		Schedule Schedule = new Schedule(DayOfWeek.MONDAY, 16, 20);
-		assertEquals(16, Schedule.getStartTime());
-		assertEquals(20, Schedule.getEndTime());
-		assertEquals(DayOfWeek.MONDAY, Schedule.getDayOfWeek());
+		Schedule schedule = new Schedule(DayOfWeek.MONDAY, 16, 20);
+		assertEquals(16, schedule.getStartTime());
+		assertEquals(20, schedule.getEndTime());
+		assertEquals(DayOfWeek.MONDAY, schedule.getDayOfWeek());
 	}
 
 	@Test

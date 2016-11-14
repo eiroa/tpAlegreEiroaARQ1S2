@@ -1,4 +1,4 @@
-package main.java.unq_surveys.domain;
+package unq_surveys.domain;
 
 
 
