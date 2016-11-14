@@ -21,8 +21,8 @@ public class RadioQuestion extends Question {
 		
 		public RadioQuestion(){}
 		
-		public RadioQuestion(int id, String questionText, String description, String helpText) {
-			super(id, questionText, description, helpText);
+		public RadioQuestion(int id, String questionText, String description) {
+			super(id, questionText, description);
 			// TODO Auto-generated constructor stub
 		}
 		

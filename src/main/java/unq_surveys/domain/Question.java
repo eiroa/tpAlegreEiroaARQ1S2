@@ -18,21 +18,14 @@ public class Question {
 		
 		private String questionText;
 		private String description;
-		private String helpText;
 		
 		
 
-		public  Question(int id, String questionText,String description,String helpText){
+		public  Question(int id, String questionText,String description){
 			this.id =id;
 			this.questionText=questionText;
 			this.description = description;
-			this.helpText=helpText;
 		}
-//		public  Question(String questionText,String description,String helpText){
-//			this.questionText=questionText;
-//			this.description = description;
-//			this.helpText=helpText;
-//		}
 		
 		public Question(){
 			
@@ -54,9 +47,6 @@ public class Question {
 			return description;
 		}
 
-		public String getHelpText() {
-			return helpText;
-		}
 			
 }
 

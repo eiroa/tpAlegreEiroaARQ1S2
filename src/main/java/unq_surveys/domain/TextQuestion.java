@@ -8,9 +8,8 @@ public class TextQuestion extends Question {
 	@JsonCreator
 	public TextQuestion(@JsonProperty("id") int id, 
 			@JsonProperty("questionText") String questionText, 
-			@JsonProperty("description") String description, 
-			@JsonProperty("helpText") String helpText) {
-		super(id,questionText,description,helpText);
+			@JsonProperty("description") String description) {
+		super(id,questionText,description);
 		
 	}
 	
