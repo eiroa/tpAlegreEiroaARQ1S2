@@ -31,8 +31,8 @@ public class SurveysBuilderTest {
 		subject1.addCourse(new Course(30));
 		subject2.addCourse(new Course(10));
 		subject3.addCourse(new Course(25));
-		subject3.addCourse(new Course(25));
-		subject3.addCourse(new Course(25));
+		subject3.addCourse(new Course(26));
+		subject3.addCourse(new Course(27));
 	}	
 	
 	@Test
