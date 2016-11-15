@@ -19,7 +19,8 @@ module.exports = {
         alias: {
             'react': 'react-lite',
             'react-dom': 'react-lite'
-        }
+        },
+        extensions: ['', '.js', '.jsx']
     },
     module: {
         loaders: [
