@@ -20,6 +20,8 @@ public class Answer {
 	
 	private @Version @JsonIgnore Long version;
 	
+	private String name;
+	
 	private boolean started;
 	private boolean answered;
 	private boolean edited;
