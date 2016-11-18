@@ -24,7 +24,13 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         this.handleInput = this.handleInput.bind( this );
         this.handleDelete = this.handleDelete.bind( this );
         this.handleAnswer = this.handleAnswer.bind(this);
+        this.sleep = this.sleep.bind(this);
     }
+    
+    sleep(ms){
+        //used for waiting execution of bootstrap table events
+        return new Promise((resolve) => setTimeout(resolve, ms));
+  }
     
 
     handleInput( e ) {
@@ -39,23 +45,23 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
     
     handleAnswer(e){
         e.preventDefault();
-        
-        
-        if(this.refs.table.state.selectedRowKeys[0] != null){
-            var key =this.refs.table.state.selectedRowKeys[0];
-            window.location = "#answerSurvey?key="+key;
-        
-       }
+        this.sleep(75).then(() => {
+            if(this.refs.table.state.selectedRowKeys[0] != null){
+                var key =this.refs.table.state.selectedRowKeys[0];
+                window.location = "#answerSurvey?key="+key;
+            
+           }
+        });
         
     }
     
-    
     handleDelete() {
-        if(this.refs.table.state.selectedRowKeys[0] != null){
-             this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
-         
-        }
-        
+        this.sleep(75).then(() => {
+            if(this.refs.table.state.selectedRowKeys[0] != null){
+                this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
+            
+           }
+        });
     }
 
     handleNavFirst( e ) {
@@ -80,8 +86,6 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
     
 
     render() {
-        
-        
         var surveysCopy = this.props.surveys.map ( 
                 function(s){ 
                     return  {key:s.entity._links.self.href,
@@ -145,25 +149,28 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         var selectRowProp = {
                 mode: "radio", // or checkbox
                 clickToSelect: true,
-                bgColor: "rgb(208, 193, 213)",
+                bgColor: "rgb(208, 193, 200)",
                 onSelect: onRowSelect
               };
         
-        var optionsProp = {
-                onDeleteRow : this.handleDelete,
-                deleteText : "destroy"
-              };
         
-
+        function sleep(time) {
+            return new Promise((resolve) => setTimeout(resolve, time));
+          }
+        
+        
         function onRowSelect(row, isSelected){
             console.log(row);
             console.log("selected: " + isSelected)
             keyRow.key = row.key;
+//            sleep(2000).then(() => {
+//                console.log("ohhh");
+//            });
+            
           }
         
-        function getRowKey(){
-            return this.refs.table.state.selectedRowKeys[0];
-        }
+        
+     
 
         return (
             <div >
@@ -176,7 +183,7 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
             hover={true} 
             condensed={true} 
             selectRow={selectRowProp}
-            options={optionsProp}>
+            >
                 <TableHeaderColumn dataField="key" isKey={true} hidden={true} >Key</TableHeaderColumn>
                 <TableHeaderColumn dataField="name"  dataSort={true} dataAlign="center">Name</TableHeaderColumn>
                 <TableHeaderColumn dataFormat={actionsFormatter} dataAlign="center">Actions</TableHeaderColumn>
