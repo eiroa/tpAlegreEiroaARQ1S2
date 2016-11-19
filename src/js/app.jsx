@@ -53,6 +53,7 @@ class App extends React.Component {// creamos un componente de REACT
         this.onUpdate = this.onUpdate.bind( this );
         this.onDelete = this.onDelete.bind( this );
         this.onDeleteDirect = this.onDeleteDirect.bind( this );
+        this.onDeleteRow = this.onDeleteRow.bind( this );
         this.onNavigate = this.onNavigate.bind( this );
         this.handleCreate = this.handleCreate.bind( this );
     }
@@ -139,6 +140,13 @@ class App extends React.Component {// creamos un componente de REACT
             this.loadFromServer( this.state.pageSize );
         });
     }
+    
+    onDeleteRow(row){
+        //assume key is the self link
+        client( { method: 'DELETE', path: row.key }).then( response => {
+            this.loadFromServer( this.state.pageSize );
+        });
+    }
 
     updatePageSize( pageSize ) {
         if ( pageSize !== this.state.pageSize ) {
@@ -192,6 +200,7 @@ class App extends React.Component {// creamos un componente de REACT
                     onNavigate={this.onNavigate}
                     onDelete={this.onDelete}
                     onDeleteDirect={this.onDeleteDirect}
+                    onDeleteRow = {this.onDeleteRow}
                     onUpdate={this.onUpdate}
                     updatePageSize={this.updatePageSize}/>
             </div>

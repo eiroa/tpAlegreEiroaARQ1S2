@@ -24,7 +24,9 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         this.handleInput = this.handleInput.bind( this );
         this.handleDelete = this.handleDelete.bind( this );
         this.handleAnswer = this.handleAnswer.bind(this);
+        this.handleAction = this.handleAction.bind(this);
         this.sleep = this.sleep.bind(this);
+        this.getSelectedRow = this.getSelectedRow.bind(this);
     }
     
     sleep(ms){
@@ -43,23 +45,28 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         }
     }
     
-    handleAnswer(e){
-        e.preventDefault();
-        this.sleep(75).then(() => {
-            if(this.refs.table.state.selectedRowKeys[0] != null){
-                var key =this.refs.table.state.selectedRowKeys[0];
-                window.location = "#answerSurvey?key="+key;
-            
-           }
-        });
-        
+    getSelectedRow(){
+        return JSON.parse(localStorage.getItem('surveySelected'));
+    }
+    
+    handleAnswer(){
+        this.handleAction(
+                function(survey){
+                    window.location = "#answerSurvey?key="+(survey.key);
+                 }
+        );
     }
     
     handleDelete() {
+        this.handleAction(
+                this.props.onDeleteRow
+         );
+    }
+    
+    handleAction(action){
         this.sleep(75).then(() => {
-            if(this.refs.table.state.selectedRowKeys[0] != null){
-                this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
-            
+            if(this.getSelectedRow() != null){
+                action(this.getSelectedRow());
            }
         });
     }
@@ -154,19 +161,14 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
               };
         
         
-        function sleep(time) {
-            return new Promise((resolve) => setTimeout(resolve, time));
-          }
-        
         
         function onRowSelect(row, isSelected){
             console.log(row);
             console.log("selected: " + isSelected)
             keyRow.key = row.key;
-//            sleep(2000).then(() => {
-//                console.log("ohhh");
-//            });
-            
+            var dataToStore = JSON.stringify(row);
+            localStorage.setItem('surveySelected', dataToStore);
+
           }
         
         

@@ -28,17 +28,30 @@ class QuestionList extends React.Component { // definimos la estructura de una l
         componentDidMount() { // que hacer al momento de haber cargado el componente,  se relaciona con el ciclo de vida del objeto DOM
             this.loadSurvey( this.props.location.query.key );
         }
-                loadSurvey(key ) {
-                    client( {
-                        method: 'GET',
-                        path: key
-                    }).then( response => {
-                        this.setState( {
-                            survey: response.entity,
-                            questions : response.entity.questions
-                        });
-                    });
-                }
+        
+        
+         loadSurvey(key ) {
+             var survey = JSON.parse(localStorage.getItem('surveySelected'));
+             if(survey){
+                 this.setState( {
+                     survey: survey.entity,
+                     questions : survey.entity.questions
+                 });
+             }else{
+
+                 client( {
+                     method: 'GET',
+                     path: key
+                 }).then( response => {
+                     this.setState( {
+                         survey: response.entity,
+                         questions : response.entity.questions
+                     });
+                 });
+             }
+             
+             
+         }
                 
                 handleAnswer(e){
                     e.preventDefault();
