@@ -24,7 +24,15 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         this.handleInput = this.handleInput.bind( this );
         this.handleDelete = this.handleDelete.bind( this );
         this.handleAnswer = this.handleAnswer.bind(this);
+        this.handleAction = this.handleAction.bind(this);
+        this.sleep = this.sleep.bind(this);
+        this.getSelectedRow = this.getSelectedRow.bind(this);
     }
+    
+    sleep(ms){
+        //used for waiting execution of bootstrap table events
+        return new Promise((resolve) => setTimeout(resolve, ms));
+  }
     
 
     handleInput( e ) {
@@ -37,25 +45,30 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         }
     }
     
-    handleAnswer(e){
-        e.preventDefault();
-        
-        
-        if(this.refs.table.state.selectedRowKeys[0] != null){
-            var key =this.refs.table.state.selectedRowKeys[0];
-            window.location = "#answerSurvey?key="+key;
-        
-       }
-        
+    getSelectedRow(){
+        return JSON.parse(localStorage.getItem('surveySelected'));
     }
     
+    handleAnswer(){
+        this.handleAction(
+                function(survey){
+                    window.location = "#answerSurvey?key="+(survey.key);
+                 }
+        );
+    }
     
     handleDelete() {
-        if(this.refs.table.state.selectedRowKeys[0] != null){
-             this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
-         
-        }
-        
+        this.handleAction(
+                this.props.onDeleteRow
+         );
+    }
+    
+    handleAction(action){
+        this.sleep(75).then(() => {
+            if(this.getSelectedRow() != null){
+                action(this.getSelectedRow());
+           }
+        });
     }
 
     handleNavFirst( e ) {
@@ -80,8 +93,6 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
     
 
     render() {
-        
-        
         var surveysCopy = this.props.surveys.map ( 
                 function(s){ 
                     return  {key:s.entity._links.self.href,
@@ -145,25 +156,23 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         var selectRowProp = {
                 mode: "radio", // or checkbox
                 clickToSelect: true,
-                bgColor: "rgb(208, 193, 213)",
+                bgColor: "rgb(208, 193, 200)",
                 onSelect: onRowSelect
               };
         
-        var optionsProp = {
-                onDeleteRow : this.handleDelete,
-                deleteText : "destroy"
-              };
         
-
+        
         function onRowSelect(row, isSelected){
             console.log(row);
             console.log("selected: " + isSelected)
             keyRow.key = row.key;
+            var dataToStore = JSON.stringify(row);
+            localStorage.setItem('surveySelected', dataToStore);
+
           }
         
-        function getRowKey(){
-            return this.refs.table.state.selectedRowKeys[0];
-        }
+        
+     
 
         return (
             <div >
@@ -176,7 +185,7 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
             hover={true} 
             condensed={true} 
             selectRow={selectRowProp}
-            options={optionsProp}>
+            >
                 <TableHeaderColumn dataField="key" isKey={true} hidden={true} >Key</TableHeaderColumn>
                 <TableHeaderColumn dataField="name"  dataSort={true} dataAlign="center">Name</TableHeaderColumn>
                 <TableHeaderColumn dataFormat={actionsFormatter} dataAlign="center">Actions</TableHeaderColumn>
