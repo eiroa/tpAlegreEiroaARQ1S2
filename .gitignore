@@ -66,4 +66,6 @@ local.properties
 /.gradle/
 /build/
 node_modules/
+guarded-mountain-47276/
+
 .gradle/
