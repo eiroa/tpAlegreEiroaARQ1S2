@@ -188,10 +188,9 @@ class App extends React.Component {// creamos un componente de REACT
     render() {
         return (
           <div>
-              <div style={{padding:'10px'}}>
-                <button className="btn btn-success" onClick={this.handleCreate}> Create new survey</button>
-              </div>
+              
             <div>
+            <h2 className="text-center"> Encuestas disponibles </h2>
                 <SurveyList surveys={this.state.surveys}
                     links={this.state.links}
                     key={this.state.key}
@@ -204,7 +203,11 @@ class App extends React.Component {// creamos un componente de REACT
                     onUpdate={this.onUpdate}
                     updatePageSize={this.updatePageSize}/>
             </div>
-                </div>
+                
+                <div style={{padding:'10px'}}>
+                <button className="btn btn-success" onClick={this.handleCreate}> Create new survey</button>
+              </div>
+          </div>
         )
     }
 }

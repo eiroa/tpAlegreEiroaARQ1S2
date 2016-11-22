@@ -20,10 +20,14 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                     this.handleNavNext = this.handleNavNext.bind( this );
                     this.handleNavLast = this.handleNavLast.bind( this );
                     this.handleInput = this.handleInput.bind( this );
-                    this.handleDelete = this.handleDelete.bind( this );
                     this.loadSurvey = this.loadSurvey.bind(this);
                     this.handleAnswer = this.handleAnswer.bind(this);
+                    this.sleep = this.sleep.bind(this);
                 }
+        
+        sleep(ms){
+            return new Promise((resolve) => setTimeout(resolve, ms));
+      }
                 
         componentDidMount() { // que hacer al momento de haber cargado el componente,  se relaciona con el ciclo de vida del objeto DOM
             this.loadSurvey( this.props.location.query.key );
@@ -52,14 +56,19 @@ class QuestionList extends React.Component { // definimos la estructura de una l
              
              
          }
+         
                 
-                handleAnswer(e){
-                    e.preventDefault();
-                    
-                        window.location = "#question";
-                    
-                }
+        handleAnswer(e){
+            e.preventDefault();
+            this.sleep(75).then(() => {
+                if(JSON.parse(localStorage.getItem('questionSelected')) != null){
+                    window.location = "#question";
+               }
+            });
                 
+            
+        }
+        
                 handleInput( e ) {
                     e.preventDefault();
                     var pageSize = ReactDOM.findDOMNode( this.refs.pageSize ).value;
@@ -70,13 +79,6 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                     }
                 }
                 
-                handleDelete() {
-                    if(this.refs.table.state.selectedRowKeys[0] != null){
-                         this.props.onDeleteDirect(this.refs.table.state.selectedRowKeys[0]);
-                     
-                    }
-                    
-                }
 
                 handleNavFirst( e ) {
                     e.preventDefault();
@@ -142,6 +144,8 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                     function onRowSelect(row, isSelected){
                         console.log(row);
                         console.log("selected: " + isSelected)
+                        var dataToStore = JSON.stringify(row);
+                        localStorage.setItem('questionSelected', dataToStore);
                       }
 
 
@@ -155,6 +159,7 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                         striped={true} 
                         hover={true} 
                         condensed={true}
+                        selectRow={selectRowProp}
                         >
                             <TableHeaderColumn dataField="key" isKey={true} hidden={true}>Key</TableHeaderColumn>
                             <TableHeaderColumn dataField="name" >Question</TableHeaderColumn>

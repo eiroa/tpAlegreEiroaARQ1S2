@@ -19,6 +19,6 @@ import unq_surveys.domain.User;
  */
 @Repository
 public interface AnswerRepository extends MongoRepository<Answer,String> , CrudRepository<Answer,String>  {
-	public User findByName(String name);
+	public Answer findByName(String name);
 	public List<Answer> findAllByName(String name);	
 }
