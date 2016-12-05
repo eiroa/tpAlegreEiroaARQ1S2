@@ -1,20 +1,15 @@
 package unq_surveys;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import unq_surveys.domain.Question;
-import unq_surveys.domain.Survey;
-import unq_surveys.domain.TextQuestion;
 import unq_surveys.helpers.CareersBuilder;
 import unq_surveys.helpers.SurveysBuilder;
 import unq_surveys.services.CareerService;
+import unq_surveys.services.QuestionService;
 import unq_surveys.services.SubjectService;
 import unq_surveys.services.SurveyService;
 
@@ -43,6 +38,9 @@ public class Application implements CommandLineRunner {
 	@Autowired	
 	private SubjectService subjectRepo;
 	
+	@Autowired
+	private QuestionService questionRepo;
+	
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -58,7 +56,7 @@ public class Application implements CommandLineRunner {
 		careerRepo.deleteAll();
 		
 		CareersBuilder.build(careerRepo,subjectRepo);
-		SurveysBuilder.build(surveyRepo, careerRepo);
+		SurveysBuilder.build(surveyRepo,questionRepo, careerRepo);
 		
 		
 	}

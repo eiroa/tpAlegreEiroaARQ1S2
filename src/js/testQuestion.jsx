@@ -22,17 +22,17 @@ class TestQuestion extends React.Component {
         
         var title = this.state.question.name;
         var options = Object.keys(this.state.question.options).map(key => this.state.question.options[key])
-        var radioOptions = options.map(o  => {
+        var radioOptions = this.state.question.options.map(o  => {
             return <div className="radio">
             <label>
             <input type="radio" name="group-poll"/>
-            <strong>{o}</strong>
+            <strong>{o.text}</strong>
         </label>
                     </div>
           });
         
-        var results = options.map(o =>{
-            return <div>{o}  
+        var results = this.state.question.options.map(o =>{
+            return <div>{o.text}  
                 <div className="progress progress-striped active">
                     <div className="progress-bar progress-bar-danger"
                         role="progressbar" aria-valuenow="60"

@@ -16,14 +16,14 @@ public class CareersBuilder {
 	public static void build(CareerService careerService, SubjectService subjectService) {
 		Career tpi = new Career("Tecnicatura Universitaria en Programacion Informatica");
 		
-		Subject intro = new Subject("Introduccion a la Programacion");
-		Subject mate1 = new Subject("Matematica 1");
-		Subject orga = new Subject("Organizacion y Arquitectura");
-		Subject obj1 = new Subject("Programacion con Objetos 1");
-		Subject obj2 = new Subject("Programacion con Objetos 2");
-		Subject uis = new Subject("Construccion de UIs");
-		Subject obj3 = new Subject("Programacion con Objetos 3");
-		Subject desapp = new Subject("Desarrollo de Aplicaciones");
+		Subject intro = new Subject("Introduccion a la Programacion",true);
+		Subject mate1 = new Subject("Matematica 1",true);
+		Subject orga = new Subject("Organizacion y Arquitectura",true);
+		Subject obj1 = new Subject("Programacion con Objetos 1",true);
+		Subject obj2 = new Subject("Programacion con Objetos 2",true);
+		Subject uis = new Subject("Construccion de UIs",true);
+		Subject obj3 = new Subject("Programacion con Objetos 3",true);
+		Subject desapp = new Subject("Desarrollo de Aplicaciones",false);
 		
 		List<Subject> tpiSubjects = Arrays.asList(intro,mate1,orga,obj1,obj2,uis,obj3,desapp);
 		addSubjectsToCareer(tpi, tpiSubjects);
@@ -33,12 +33,19 @@ public class CareersBuilder {
 		
 		Career li = new Career("Licenciatura en Informatica");
 		
-		Subject gest = new Subject("Gestion de Proyectos de Software");
-		Subject prac = new Subject("Practicas de Desarrollo de Software");
-		Subject lyp = new Subject("Logica y Programacion");
-		Subject arq1 = new Subject("Arquitectura de Software 1");
+		Subject gest = new Subject("Gestion de Proyectos de Software",false);
+		Subject prac = new Subject("Practicas de Desarrollo de Software",false);
+		Subject lyp = new Subject("Logica y Programacion",false);
+		Subject arq1 = new Subject("Arquitectura de Software 1",false);
 		
-		List<Subject> liSubjects = Arrays.asList(intro,mate1,orga,obj1,obj2,uis,obj3,gest,prac,lyp,arq1);
+		List<Subject> liSubjects = Arrays.asList(subjectService.getSubjectByName("Introduccion a la Programacion"),
+				subjectService.getSubjectByName("Matematica 1"),
+				subjectService.getSubjectByName("Organizacion y Arquitectura"),
+				subjectService.getSubjectByName("Programacion con Objetos 1"),
+				subjectService.getSubjectByName("Programacion con Objetos 2"),
+				subjectService.getSubjectByName("Programacion con Objetos 3"),
+				subjectService.getSubjectByName("Construccion de UIs"),
+				gest,prac,lyp,arq1);
 		addSubjectsToCareer(li, liSubjects);
 		buildCoursesForSubjects(liSubjects);
 		
@@ -59,7 +66,7 @@ public class CareersBuilder {
 	}
 
 	private static void addCourseToSubject(Subject subject, int quota, Schedule firstSchedule, Schedule secondSchedule) {
-		Course course = new Course(quota);
+		Course course = new Course(quota,1,2017);
 		course.addSchedule(firstSchedule);
 		course.addSchedule(secondSchedule);
 		subject.addCourse(course);

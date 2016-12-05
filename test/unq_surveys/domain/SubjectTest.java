@@ -12,12 +12,12 @@ public class SubjectTest {
 
 	@Test
 	public void testSubjectIsCreatedProperly() {		
-		Subject subject = new Subject("Programming 101");
+		Subject subject = new Subject("Programming 101",false);
 		assertTrue(subject.getCourses().isEmpty());
 	}
 	@Test
 	public void testSubjectCanAddCourses() {		
-		Subject subject = new Subject("Programming 101");
+		Subject subject = new Subject("Programming 101",false);
 		Course aCourse = new Course(20);
 		subject.addCourse(aCourse);
 		assertEquals(1, subject.numberOfCourses());

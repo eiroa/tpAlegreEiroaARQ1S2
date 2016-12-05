@@ -152,7 +152,7 @@ class QuestionList extends React.Component { // definimos la estructura de una l
 
                     return (
                         <div >
-                           
+                           <h2>Preguntas</h2>
                         <BootstrapTable 
                         ref="table"
                         data={questions} 
@@ -167,9 +167,9 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                         </BootstrapTable>
                        
                        <div>
-                                
-                            </div>
+                             <button className="btn - btn-success"> Guardar respuestas </button>   
                         </div>
+                      </div>
                     )
                 }
          }

@@ -20,36 +20,35 @@ public class Subject {
 
 	String name;
 	List<Course> courses;
+	boolean isShared;
 	
 	private @Version @JsonIgnore Long version;
 
-	public Subject(String name) {
+	public Subject(String name,boolean isShared) {
 		this.name = name;
 		courses = new ArrayList<Course>();
-	}
-
-
-	public void addCourse(Course aCourse) {
-		courses.add(aCourse);
+		this.isShared = isShared;
 	}
 
 	public int numberOfCourses() {
 		return courses.size();
 	}
 
-
-	public String getId() {
-		return id;
-	}
-
-
 	public String getName() {
 		return name;
 	}
-
-
-	public List<Course> getCourses() {
-		return courses;
-	}
 	
+	public void addCourse(Course c){
+		
+		if(!this.courses.stream().anyMatch(course -> 
+		course.year.equals(c.year) && 
+		course.semester.equals(c.semester) && 
+		course.getSchedules().toString().equals(c.getSchedules().toString()))){
+			this.courses.add(c);
+		}else{
+			System.out.println(" ///////////   Warning, subject already has a course////////");
+		}
+		
+	}
+
 }

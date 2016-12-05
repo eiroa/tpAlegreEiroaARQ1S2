@@ -22,10 +22,18 @@ public class SubjectService {
 	private SubjectRepository repository;
 	
 	public void save(Subject Subject){
-		repository.save(Subject);
+		if(Subject.isShared()){
+			List<Subject>ss = this.repository.findAllByName(Subject.getName());
+			if(ss.isEmpty()){
+				repository.save(Subject);
+			}
+		}else{
+			repository.save(Subject);
+		}
+		
 	}
 	
-	public Subject getSubject(String name){
+	public Subject getSubjectByName(String name){
 		return repository.findByName(name);
 	}
 	

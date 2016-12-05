@@ -26,6 +26,8 @@ public class Answer {
 	private boolean answered;
 	private boolean edited;
 	
+	private ArrayList<QuestionAnswer> qanswers = new ArrayList<QuestionAnswer>();
+	
 	public Answer(){
 		
 	}

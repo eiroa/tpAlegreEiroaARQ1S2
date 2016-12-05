@@ -21,7 +21,7 @@ public class CareerTest {
 	@Test
 	public void testCareerCanAddSubjects() {
 		Career career = new Career("University Technician in Computer Systems Programming");
-		Subject aSubject = new Subject("Programming 101");
+		Subject aSubject = new Subject("Programming 101",false);
 		career.addSubject(aSubject);
 		assertEquals(1, career.numberOfSubjects());
 	}

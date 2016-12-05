@@ -1,30 +1,29 @@
 package unq_surveys.domain;
 
-//import org.springframework.data.annotation.Id;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
+@Document
 @Data
 public class Question {
 	
 		
-		private int id;
+		@Id 
+		private String id;
 		
 		private String questionText;
 		private String description;
+		private boolean isShared;
 		
 		
 
-		public  Question(int id, String questionText,String description){
+		public  Question(String id, String questionText,String description, boolean shared){
 			this.id =id;
 			this.questionText=questionText;
 			this.description = description;
+			this.isShared = shared;
 		}
 		
 		public Question(){
@@ -35,7 +34,12 @@ public class Question {
 			this.questionText = questionText;
 		}
 
-		public int getId() {
+		public Question(String questionText2, boolean isShared) {
+			this.questionText = questionText2;
+			this.isShared = isShared;
+		}
+
+		public String getId() {
 			return id;
 		}
 

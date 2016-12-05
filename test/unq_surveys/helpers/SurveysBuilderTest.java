@@ -19,9 +19,9 @@ import unq_surveys.domain.Survey;
 public class SurveysBuilderTest {
 
 	private Career aCareer = new Career("Test Career");
-	private Subject subject1 = new Subject("Subject 1");
-	private Subject subject2 = new Subject("Subject 2");
-	private Subject subject3 = new Subject("Subject 3");
+	private Subject subject1 = new Subject("Subject 1",false);
+	private Subject subject2 = new Subject("Subject 2",false);
+	private Subject subject3 = new Subject("Subject 3",false);
 	private List<Subject> careerSubjects = Arrays.asList(subject1,subject2,subject3);
 	
 	@Before
