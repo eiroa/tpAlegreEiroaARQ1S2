@@ -7,15 +7,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
+
 @Document
 @Data
 public class QuestionAnswer {
 	
         @Id
 		private String id;
+        
 		private String responseText;
-		
+		private User user;
 		private List<Integer>selectedOptions;
+		private Question question;
 		
 		public QuestionAnswer(){}
 		
@@ -24,9 +27,9 @@ public class QuestionAnswer {
 			this.setResponseText(responseText);
 		}
 		
-		public QuestionAnswer(List<Integer> optionsSelected) {
+		public QuestionAnswer(List<Integer> selectedOptions) {
 			super();
-			this.setSelectedOptions(optionsSelected);
+			this.setSelectedOptions(selectedOptions);
 		}
 		
 		public QuestionAnswer(String responseText, List<Integer> optionsSelected) {
@@ -34,5 +37,22 @@ public class QuestionAnswer {
 			this.setResponseText(responseText);
 			this.setSelectedOptions(optionsSelected);
 		}
+		
+		
+		public QuestionAnswer(String responseText, List<Integer> optionsSelected,User user) {
+			super();
+			this.setResponseText(responseText);
+			this.setSelectedOptions(optionsSelected);
+			this.setUser(user);
+		}
+		
+		public QuestionAnswer(Question q, String responseText, List<Integer> optionsSelected,User user) {
+			super();
+			this.setQuestion(q);
+			this.setResponseText(responseText);
+			this.setSelectedOptions(optionsSelected);
+			this.setUser(user);
+		}
+		
 		
 }

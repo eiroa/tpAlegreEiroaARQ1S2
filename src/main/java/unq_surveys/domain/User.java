@@ -18,7 +18,11 @@ public class User {
 	@Id 
 	private String id;
 	
-	String name;	
+	private String name;
+	private String surname;
+	private int studentId;
+	private String mail;
+	
 	
 	private @Version @JsonIgnore Long version;
 	
@@ -27,6 +31,14 @@ public class User {
 	}
 	
 	public User() {
+	}
+	
+	public User(String name, String surname, int studentId, String mail){
+		this.name = name;
+		this.surname =surname;
+		this.studentId=studentId;
+		this.mail=mail;
+		
 	}
 
 	

@@ -3,11 +3,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+const client = require( './client' );
+const root = '/api';
+const follow = require( './follow' )
+
 
 class TestQuestion extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+                newAnswer: {selectedOptions:[]}
+              };
         this.loadQuestion = this.loadQuestion.bind(this);
+        this.saveAnswer = this.saveAnswer.bind(this);
+        this.checkOption = this.checkOption.bind(this);
+        this.onSave = this.onSave.bind(this);
     }
     
     loadQuestion(){
@@ -18,6 +28,40 @@ class TestQuestion extends React.Component {
         this.loadQuestion();
     }
     
+    saveAnswer( newAnswer ) {
+        follow( client, root, ['questionAnswers'] ).then( qaCollection => {
+            return client( {
+                method: 'POST',
+                path: qaCollection.entity._links.self.href,
+                entity: newAnswer,
+                headers: { 'Content-Type': 'application/json' }
+            })
+        }).then( response => {
+            return follow( client, root, [
+                { rel: 'surveys', params: { 'size': 2} }] );
+        });
+    }
+    
+    onSave(e){
+        e.preventDefault();
+        this.state.question.options.forEach(o => {
+            if(o.checked){
+                console.log("pushing "+o.key);
+                this.state.newAnswer.selectedOptions.push(o.key);
+            }
+        });
+        this.saveAnswer( this.state.newAnswer );
+        this.state.newAnswer.selectedOptions = [];
+
+    }
+    
+    checkOption(key){
+        console.log("key: "+key)
+        this.state.question.options.forEach(o => {o.checked = false});
+        this.state.question.options.forEach(o => {if (o.key == key){o.checked=true;}});
+        console.log("test");
+    }
+    
     render() {
         
         var title = this.state.question.name;
@@ -25,7 +69,7 @@ class TestQuestion extends React.Component {
         var radioOptions = this.state.question.options.map(o  => {
             return <div className="radio">
             <label>
-            <input type="radio" name="group-poll"/>
+            <input onClick={() => this.checkOption(o.key)} type="radio" name="group-poll"/>
             <strong>{o.text}</strong>
         </label>
                     </div>
@@ -67,8 +111,8 @@ class TestQuestion extends React.Component {
                                 
                             </div>
                             <div className="panel-footer">
-                                <a href="#" className="btn btn-success btn-sm">
-                                    <span className="glyphicon glyphicon-bell"></span> Save answer</a>
+                                <button className="btn btn-success btn-sm" onClick={this.onSave}>
+                                    <span className="glyphicon glyphicon-bell"></span> Save answer</button>
                             </div>
                         </div>
 
@@ -81,6 +125,21 @@ class TestQuestion extends React.Component {
 
 
 }
+
+
+var Checkbox = React.createClass({
+  onChange() {
+    this.props.onChange(!this.props.checked);
+  },
+
+  render() {
+    const props = {
+      onChange: this.onChange,
+    };
+
+    return <input type="checkbox" />;
+  }
+});
                                 
                                 
 module.exports = TestQuestion;                                

@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import unq_surveys.helpers.CareersBuilder;
 import unq_surveys.helpers.SurveysBuilder;
 import unq_surveys.services.CareerService;
+import unq_surveys.services.QuestionAnswerService;
 import unq_surveys.services.QuestionService;
 import unq_surveys.services.SubjectService;
 import unq_surveys.services.SurveyService;
@@ -41,6 +42,9 @@ public class Application implements CommandLineRunner {
 	@Autowired
 	private QuestionService questionRepo;
 	
+	@Autowired
+	private QuestionAnswerService questionAnswerRepo;
+	
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -54,6 +58,8 @@ public class Application implements CommandLineRunner {
 		surveyRepo.deleteAll();
 		subjectRepo.deleteAll();
 		careerRepo.deleteAll();
+		questionAnswerRepo.deleteAll();
+		questionRepo.deleteAll();
 		
 		CareersBuilder.build(careerRepo,subjectRepo);
 		SurveysBuilder.build(surveyRepo,questionRepo, careerRepo);

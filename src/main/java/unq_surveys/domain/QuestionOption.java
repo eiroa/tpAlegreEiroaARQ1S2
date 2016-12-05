@@ -8,6 +8,7 @@ public class QuestionOption {
 
 		private Integer key;
 		private String text;
+		private boolean checked;
 		
 		public QuestionOption(){}
 		
@@ -15,6 +16,7 @@ public class QuestionOption {
 			super();
 			this.setKey(key);
 			this.setText(text);
+			this.checked = false;
 		}
 		
 }
