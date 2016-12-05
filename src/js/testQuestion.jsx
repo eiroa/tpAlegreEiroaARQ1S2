@@ -36,10 +36,7 @@ class TestQuestion extends React.Component {
                 entity: newAnswer,
                 headers: { 'Content-Type': 'application/json' }
             })
-        }).then( response => {
-            return follow( client, root, [
-                { rel: 'surveys', params: { 'size': 2} }] );
-        });
+        })
     }
     
     onSave(e){
@@ -47,11 +44,11 @@ class TestQuestion extends React.Component {
         this.state.question.options.forEach(o => {
             if(o.checked){
                 console.log("pushing "+o.key);
-                this.state.newAnswer.selectedOptions.push(o.key);
+                this.state.newAnswer.selectedOptions = [o.key];
             }
         });
         this.saveAnswer( this.state.newAnswer );
-        this.state.newAnswer.selectedOptions = [];
+        //this.state.newAnswer.selectedOptions = [];
 
     }
     

@@ -3,6 +3,7 @@ package unq_surveys.domain;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
@@ -18,6 +19,8 @@ public class QuestionAnswer {
 		private String responseText;
 		private User user;
 		private List<Integer>selectedOptions;
+		
+		@DBRef
 		private Question question;
 		
 		public QuestionAnswer(){}

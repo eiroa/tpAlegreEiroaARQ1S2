@@ -19,6 +19,16 @@ public class Course {
 	
 	Integer year;
 	Integer semester;
+	
+	public Course(){
+		
+	}
+	
+	public Course(int quota) {
+		assertQuotaIsGreaterThanZero(quota);
+		this.quota = quota;
+	}
+
 
 	public Course(int quota, int year, int semester) {
 		assertQuotaIsGreaterThanZero(quota);
