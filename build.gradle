@@ -30,10 +30,12 @@ targetCompatibility = 1.8
 
 dependencies {
 	compile("org.projectlombok:lombok:1.16.10")
+	compile("org.springframework.boot:spring-boot-starter-hateoas")
 	compile("org.springframework.boot:spring-boot-starter-data-mongodb")	
     compile("org.springframework.boot:spring-boot-starter-web")
     compile 'org.springframework.data:spring-data-rest-webmvc:2.5.4.RELEASE'
     compile 'org.springframework.boot:spring-boot-devtools'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    testCompile("com.jayway.jsonpath:json-path")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

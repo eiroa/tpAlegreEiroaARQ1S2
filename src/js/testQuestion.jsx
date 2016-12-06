@@ -47,8 +47,8 @@ class TestQuestion extends React.Component {
                 this.state.newAnswer.selectedOptions = [o.key];
             }
         });
+        this.state.newAnswer.question = this.state.question._links.self.href
         this.saveAnswer( this.state.newAnswer );
-        //this.state.newAnswer.selectedOptions = [];
 
     }
     

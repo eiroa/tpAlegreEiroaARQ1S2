@@ -20,7 +20,6 @@ public class QuestionAnswer {
 		private User user;
 		private List<Integer>selectedOptions;
 		
-		@DBRef
 		private Question question;
 		
 		public QuestionAnswer(){}
@@ -32,6 +31,12 @@ public class QuestionAnswer {
 		
 		public QuestionAnswer(List<Integer> selectedOptions) {
 			super();
+			this.setSelectedOptions(selectedOptions);
+		}
+		
+		public QuestionAnswer(Question q ,List<Integer> selectedOptions) {
+			super();
+			this.question = q;
 			this.setSelectedOptions(selectedOptions);
 		}
 		

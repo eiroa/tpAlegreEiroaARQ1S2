@@ -1,5 +1,7 @@
 package unq_surveys.domain;
 
+import org.bson.types.ObjectId;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

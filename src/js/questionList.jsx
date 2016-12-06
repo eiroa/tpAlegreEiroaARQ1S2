@@ -118,7 +118,7 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                     var questions = 
                             this.state.questions.map ( 
                                     function(q,i){ 
-                                        return  {key:i,
+                                        return  {key:q._links.self.href,
                                             name:q.questionText,
                                             options: q.options
                                         

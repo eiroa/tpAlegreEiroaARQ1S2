@@ -1,11 +1,13 @@
 package unq_surveys.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.hateoas.ResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -22,10 +24,10 @@ import lombok.Data;
  */
 @Document
 @Data
-public class Survey {
+public class Survey extends ResourceSupport {
 	
 		@Id 
-		private String id;
+		private ObjectId id;
 		
 		private String name;
 		private String description;
@@ -40,11 +42,10 @@ public class Survey {
 		
 		public Survey(String name) {			
 			this.name = name;
-			this.questions = new ArrayList<Question>();
 		}
 
 
-		public Survey(String id,String name, String description, String helpText) {
+		public Survey(ObjectId id,String name, String description, String helpText) {
 			super();
 			this.id = id;
 			this.name = name;
