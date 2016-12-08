@@ -2,16 +2,14 @@ package unq_surveys.domain;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import lombok.Data;
 
 /**
  * Definicion de una encuesta
@@ -23,11 +21,10 @@ import lombok.Data;
  *
  */
 @Document
-@Data
 public class Survey extends ResourceSupport {
 	
 		@Id 
-		private ObjectId id;
+		private String id;
 		
 		private String name;
 		private String description;
@@ -45,7 +42,7 @@ public class Survey extends ResourceSupport {
 		}
 
 
-		public Survey(ObjectId id,String name, String description, String helpText) {
+		public Survey(String id,String name, String description, String helpText) {
 			super();
 			this.id = id;
 			this.name = name;
@@ -68,9 +65,6 @@ public class Survey extends ResourceSupport {
 			this.questions = questions;
 		}
 
-		public String getId() {
-			return id;
-		}
 
 		public String getName() {
 			return name;
@@ -91,5 +85,27 @@ public class Survey extends ResourceSupport {
 		public List<Question> getQuestions() {
 			return questions;
 		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public void setHelpText(String helpText) {
+			this.helpText = helpText;
+		}
+
+		public void setVersion(Long version) {
+			this.version = version;
+		}
+
+		public void setQuestions(List<Question> questions) {
+			this.questions = questions;
+		}
+		
+		
 				  
 }
