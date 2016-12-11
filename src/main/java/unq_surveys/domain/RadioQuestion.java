@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 
 @Data
+@Document(collection="questions")
 public class RadioQuestion extends Question {
 	
 
@@ -16,7 +17,7 @@ public class RadioQuestion extends Question {
 
 	public RadioQuestion(){}
 	
-	public RadioQuestion(String id, String questionText, String description, boolean isShared) {
+	public RadioQuestion(ObjectId id, String questionText, String description, boolean isShared) {
 		super(id, questionText, description, isShared);
 	}
 	

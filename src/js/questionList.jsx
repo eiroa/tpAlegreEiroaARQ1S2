@@ -39,8 +39,16 @@ class QuestionList extends React.Component { // definimos la estructura de una l
              if(survey){
                  this.setState( {
                      survey: survey.entity,
-                     questions : survey.entity.questions
                  });
+                 
+                     return client( {
+                         method: 'GET',
+                         path: survey._links.questions.href,
+                         headers: { 'Content-Type': 'application/json' }
+                     }).then( response => {
+                         this.setState({questions: response.entity._embedded.radioQuestions});
+                     });
+                
              }else{
 
                  client( {
@@ -49,9 +57,14 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                  }).then( response => {
                      this.setState( {
                          survey: response.entity,
-                         questions : response.entity.questions
                      });
-                 });
+                 }); 
+                 this.sleep(50);
+                 client({ 
+                     method: 'GET', 
+                     path: this.state.survey._links.questions.href}
+                 ).then(response => {this.setState({questions: response.entitiy._embedded.radioQuestions});}
+                    );
              }
              
              
@@ -65,8 +78,6 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                     window.location = "#question";
                }
             });
-                
-            
         }
         
                 handleInput( e ) {
@@ -118,7 +129,7 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                     var questions = 
                             this.state.questions.map ( 
                                     function(q,i){ 
-                                        return  {key:q._links.self.href,
+                                        return  {key:i,
                                             name:q.questionText,
                                             options: q.options
                                         

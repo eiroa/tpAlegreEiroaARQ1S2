@@ -13,6 +13,7 @@ import unq_surveys.services.QuestionAnswerService;
 import unq_surveys.services.QuestionService;
 import unq_surveys.services.SubjectService;
 import unq_surveys.services.SurveyService;
+import unq_surveys.services.UserService;
 
 /**
  * Clase maestra que define el punto de entrada de la aplicacion
@@ -45,6 +46,9 @@ public class Application implements CommandLineRunner {
 	@Autowired
 	private QuestionAnswerService questionAnswerRepo;
 	
+	@Autowired
+	private UserService userService;
+	
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -62,7 +66,7 @@ public class Application implements CommandLineRunner {
 		questionRepo.deleteAll();
 		
 		CareersBuilder.build(careerRepo,subjectRepo);
-		SurveysBuilder.build(surveyRepo,questionRepo, careerRepo);
+		SurveysBuilder.build(surveyRepo,questionRepo, careerRepo,userService);
 		
 		
 	}

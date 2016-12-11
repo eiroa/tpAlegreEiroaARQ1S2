@@ -1,16 +1,18 @@
 package unq_surveys.domain;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
 @Data
+@Document(collection="questions")
 public class Question {
 	
 		
 		@Id 
-		private String id;
+		private ObjectId id;
 		
 		private String questionText;
 		private String description;
@@ -18,7 +20,7 @@ public class Question {
 		
 		
 
-		public  Question(String id, String questionText,String description, boolean shared){
+		public  Question(ObjectId id, String questionText,String description, boolean shared){
 			this.id =id;
 			this.questionText=questionText;
 			this.description = description;
@@ -38,7 +40,7 @@ public class Question {
 			this.isShared = isShared;
 		}
 
-		public String getId() {
+		public ObjectId getId() {
 			return id;
 		}
 

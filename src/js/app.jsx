@@ -463,6 +463,7 @@ class SubjectList extends React.Component { // definimos la estructura de una li
                         name: s.entity.name,
                         description: s.entity.description,
                         entity: s.entity,
+                        _links: s.entity._links,
                         deleteFunction: function(){return this.props.onDeleteDirect}
                      }
                 });

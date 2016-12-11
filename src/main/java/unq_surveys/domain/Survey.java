@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.hateoas.ResourceSupport;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
-import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Data;
 
 /**
  * Definicion de una encuesta
@@ -21,7 +21,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @Document
-public class Survey extends ResourceSupport {
+@Data
+public class Survey {
 	
 		@Id 
 		private String id;
@@ -33,7 +34,9 @@ public class Survey extends ResourceSupport {
 		//Version permite incrementar la versión del objeto y asegura un optimistic lock
 		private @Version @JsonIgnore Long version;
 		
+		@DBRef
 		private List<Question> questions;
+		
 		
 		public Survey(){};		
 		

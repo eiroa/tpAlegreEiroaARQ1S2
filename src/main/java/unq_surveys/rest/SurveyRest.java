@@ -28,18 +28,16 @@ import unq_surveys.services.SurveyService;
  *
  */
 @RestController
-@ExposesResourceFor(Survey.class)
 public class SurveyRest {
 
     @Autowired
 	private SurveyService surveyService;
     
-    @RequestMapping("/surveys")
     public HttpEntity<List<Survey>> getSurveys() {
     	
         List<Survey>  ss = surveyService.getAll();
        ss.stream().forEach(s -> {
-    	   s.add(linkTo(methodOn(SurveyRest.class).getSurveys()).withSelfRel());
+//    	   s.add(linkTo(methodOn(SurveyRest.class).getSurveys()).withSelfRel());
        });
         
         return new ResponseEntity<List<Survey>>(ss, HttpStatus.OK);

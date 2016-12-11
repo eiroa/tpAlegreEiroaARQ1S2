@@ -11,13 +11,15 @@ import unq_surveys.domain.Question;
 import unq_surveys.domain.QuestionOption;
 import unq_surveys.domain.RadioQuestion;
 import unq_surveys.domain.Survey;
+import unq_surveys.domain.User;
 import unq_surveys.services.CareerService;
 import unq_surveys.services.QuestionService;
 import unq_surveys.services.SurveyService;
+import unq_surveys.services.UserService;
 
 public class SurveysBuilder {
 
-	public static void build(SurveyService repo, QuestionService questionService, CareerService careerService) {
+	public static void build(SurveyService repo, QuestionService questionService, CareerService careerService,UserService userService) {
 		
 				
 		List<Survey> surveys = new ArrayList<Survey>();
@@ -27,7 +29,7 @@ public class SurveysBuilder {
 		});
 		
 		
-		saveSurveys(surveys, repo, questionService);
+		saveSurveys(surveys, repo, questionService,userService);
 	}
 
 	
@@ -37,17 +39,18 @@ public class SurveysBuilder {
 	 * @param repo
 	 * @param questionService
 	 */
-	private static void saveSurveys(List<Survey> surveys, SurveyService surveyService, QuestionService questionService) {
-		
+	private static void saveSurveys(List<Survey> surveys, SurveyService surveyService, QuestionService questionService, UserService userService) {
+		final ArrayList<Integer> is = new ArrayList<Integer>();
 		surveys.stream().forEach(s -> {
 			// Now that the questions are saved, it is imperative to include de ids before saving the surveys
 			s.getQuestions().stream().forEach(
 					q -> 
 					{ 	questionService.save(q); 
-					String id = questionService.getQuestion(q.getQuestionText()).getId();
+					ObjectId id = questionService.getQuestion(q.getQuestionText()).getId();
 						System.out.println("setting id " + id);
 						q.setId(id);
 					});
+			
 			surveyService.save(s);
 			System.out.println("          checking id questions in survey "+ s.getQuestions().toString() + "            ");
 		});

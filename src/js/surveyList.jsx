@@ -98,7 +98,8 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
                     return  {key:s.entity._links.self.href,
                         name: s.entity.name,
                         description: s.entity.description,
-                        entity: s.entity
+                        entity: s.entity,
+                        _links: s.entity._links
                      }
                 });
         
