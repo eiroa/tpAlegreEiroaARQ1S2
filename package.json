@@ -45,6 +45,7 @@
     ]
   },
   "scripts": {
+    "preinstall": "npm i -g pm2",
     "watch": "webpack --watch -d"
   }
 }
