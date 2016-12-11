@@ -1,0 +1,1 @@
+web: pm2 start src/js/main.js
