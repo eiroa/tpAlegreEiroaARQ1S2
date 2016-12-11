@@ -2,6 +2,7 @@ package unq_surveys.repositories;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,7 @@ import unq_surveys.domain.Question;
  *
  */
 @Repository
-public interface QuestionRepository extends MongoRepository<Question,String> , CrudRepository<Question,String>  {
+public interface QuestionRepository extends MongoRepository<Question,ObjectId> , CrudRepository<Question,ObjectId>  {
 	public Question findByQuestionText(String questionText);
 	public List<Question> findAllByQuestionText(String questionText);	
 }

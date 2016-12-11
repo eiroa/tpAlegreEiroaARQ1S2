@@ -65,7 +65,7 @@ public class SurveysBuilder {
 		builtSurvey.setQuestions(new LinkedList<Question>());
 		aCareer.getSubjects().stream().forEach( subject -> {
 			//consider the subject title as the question text
-			RadioQuestion subjectQuestion = new RadioQuestion(subject.getName(),subject.isShared());
+			Question subjectQuestion = new Question(subject.getName(),subject.isShared());
 			subjectQuestion.setOptions(new LinkedList<QuestionOption>());
 			subject.getCourses().stream().forEach( course -> {
 				//Each new option will have as key an integer from 1 to n

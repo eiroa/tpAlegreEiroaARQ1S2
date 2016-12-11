@@ -46,7 +46,8 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                          path: survey._links.questions.href,
                          headers: { 'Content-Type': 'application/json' }
                      }).then( response => {
-                         this.setState({questions: response.entity._embedded.radioQuestions});
+                         this.setState({questions: response.entity._embedded.questions});
+                         console.log("questions Loaded: "+ this.state.questions);
                      });
                 
              }else{
@@ -63,7 +64,7 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                  client({ 
                      method: 'GET', 
                      path: this.state.survey._links.questions.href}
-                 ).then(response => {this.setState({questions: response.entitiy._embedded.radioQuestions});}
+                 ).then(response => {this.setState({questions: response.entitiy._embedded.questions});}
                     );
              }
              
@@ -129,10 +130,11 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                     var questions = 
                             this.state.questions.map ( 
                                     function(q,i){ 
-                                        return  {key:i,
+                                        return  {key:q._links.self.href,
                                             name:q.questionText,
-                                            options: q.options
-                                        
+                                            options: q.options,
+                                            shared: q.shared,
+                                            _links: q._links
                                          }
                                     });
                         

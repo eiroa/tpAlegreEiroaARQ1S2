@@ -1,5 +1,7 @@
 package unq_surveys.domain;
 
+import java.util.List;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,11 +10,13 @@ import lombok.Data;
 
 @Data
 @Document(collection="questions")
-public class Question {
+public class Question implements RadioQuestion,TextQuestion{
 	
 		
 		@Id 
 		private ObjectId id;
+		
+		private List<QuestionOption> options;
 		
 		private String questionText;
 		private String description;
@@ -50,6 +54,19 @@ public class Question {
 
 		public String getDescription() {
 			return description;
+		}
+
+		@Override
+		public List<QuestionOption> getOptions() {
+			// TODO Auto-generated method stub
+			return this.options;
+		}
+
+
+		@Override
+		public void setOptions(List<QuestionOption> opts) {
+			// TODO Auto-generated method stub
+			this.options = opts;
 		}
 
 			

@@ -22,6 +22,7 @@ class TestQuestion extends React.Component {
     
     loadQuestion(){
         this.setState({question: JSON.parse(localStorage.getItem('questionSelected'))});
+        console.log("question loaded: " + this.state.question);
         }
     
     componentWillMount(){
@@ -47,7 +48,8 @@ class TestQuestion extends React.Component {
                 this.state.newAnswer.selectedOptions = [o.key];
             }
         });
-        this.state.newAnswer.question = this.state.question._links.self.href
+        
+        this.state.newAnswer.question = this.state.question._links.self.href;
         this.saveAnswer( this.state.newAnswer );
 
     }

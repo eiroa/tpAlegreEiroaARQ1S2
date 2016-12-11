@@ -8,20 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
-@Data
-@Document(collection="questions")
-public class TextQuestion extends Question {
+public interface TextQuestion {
 
-	@JsonCreator
-	public TextQuestion(@JsonProperty("id") ObjectId id, 
-			@JsonProperty("questionText") String questionText, 
-			@JsonProperty("description") String description,
-			@JsonProperty("isShared") boolean shared) {
-		super(id,questionText,description,shared);
-		
-	}
 	
-	public TextQuestion(){
-		super();
-	}
 }

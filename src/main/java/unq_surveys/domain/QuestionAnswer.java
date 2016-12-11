@@ -20,6 +20,7 @@ public class QuestionAnswer {
 		private User user;
 		private List<Integer>selectedOptions;
 		
+		@DBRef
 		private Question question;
 		
 		public QuestionAnswer(){}
