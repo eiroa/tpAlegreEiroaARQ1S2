@@ -70,7 +70,10 @@ public class SurveysBuilder {
 			subject.getCourses().stream().forEach( course -> {
 				//Each new option will have as key an integer from 1 to n
 				subjectQuestion.getOptions().add(new QuestionOption(subjectQuestion.getOptions().size() + 1, course.toString()));
-			});			
+			});
+			subjectQuestion.getOptions().add(new QuestionOption(subjectQuestion.getOptions().size() + 1, "No voy a cursar aún"));
+			subjectQuestion.getOptions().add(new QuestionOption(subjectQuestion.getOptions().size() + 1, "Ya aprobé"));
+			subjectQuestion.getOptions().add(new QuestionOption(subjectQuestion.getOptions().size() + 1, "No puedo cursar en ese horario"));
 			builtSurvey.getQuestions().add(subjectQuestion); 
 			
 		});
