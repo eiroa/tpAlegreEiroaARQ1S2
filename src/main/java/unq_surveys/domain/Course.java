@@ -15,7 +15,7 @@ public class Course {
 
 	
 	int quota; //Cupo
-	List<Schedule> schedules;
+	List<Schedule> schedules  = new ArrayList<Schedule>();;
 	
 	Integer year;
 	Integer semester;
@@ -33,7 +33,6 @@ public class Course {
 	public Course(int quota, int year, int semester) {
 		assertQuotaIsGreaterThanZero(quota);
 		this.quota = quota;
-		this.schedules = new ArrayList<Schedule>();
 		this.year = year;
 		this.semester = semester;
 	}
@@ -51,7 +50,7 @@ public class Course {
 	public void addSchedule(Schedule aSchedule){
 		//Ignore adding a new one if identical schedule already exists
 		
-		if(!(schedules.stream().anyMatch( schedule -> schedule.dayOfWeek.compareTo(aSchedule.dayOfWeek) == 0  && 
+		if( schedules!= null  || schedules.isEmpty() || !(schedules.stream().anyMatch( schedule -> schedule.dayOfWeek.compareTo(aSchedule.dayOfWeek) == 0  && 
 				schedule.startTime == aSchedule.startTime && schedule.endTime == aSchedule.endTime))){
 			
 			schedules.add(aSchedule);

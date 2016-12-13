@@ -24,6 +24,7 @@ public class CourseTest {
 	@Test
 	public void testCourseCanAddSchedules() {
 		Course course = new Course(20);
+		
 		course.addSchedule(new Schedule(DayOfWeek.MONDAY,10,14));
 		assertEquals(1,course.numberOfSchedules());
 	}
