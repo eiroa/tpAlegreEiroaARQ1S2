@@ -104,13 +104,10 @@ class CreateSurvey extends React.Component {
     render() {
         
         
-        var questionList = this.state.newSurvey.questions.map(q  => {
-                        return <ListGroupItem href="#test">{q.questionText}</ListGroupItem>
-                      });
     
         return (
             <div   className="panel panel-primary" id="panelNewIdea">
-                <div className="panel-heading"><h3>Create new survey</h3></div>
+                <div className="panel-heading"><h3>Crear nueva encuesta</h3></div>
 
                 <div className="panel-body" id="formi" style={{ marginTop: '30px' }}>
 
@@ -134,73 +131,32 @@ class CreateSurvey extends React.Component {
 
                     </div>
                     
+                    
+                
+                <div className="form-group">
+                <textarea form ="formi"
+                    className="form-control"
+                    cols="35"
+                    wrap="soft"
+                    name="career"
+                    disabled   
+                        placeholder="Seleccionar Carrera"></textarea>
 
-                    <div className="form-group well">
-                        <form className="form-inline" role="form" style={{ padding: '10px' }} name="urlForm">
-                            <div style={{ padding: '5px' }}>
-                                <button onClick={() => this.refs.simpleDialog.show()}  
-                                className="btn btn-info pull-right" >
-                                    Add question 
-                                </button>
-                                    
-                                    <SkyLight hideOnOverlayClicked 
-                                    ref="simpleDialog" 
-                                        title="Create a new Text Question">
-                                   <div  className="panel panel-primary" id="panelNewQuestion">
-                                    <div className="panel-body" id="questionForm" style={{ marginTop: '10px' }}>
+            </div>
+            
+            <div className="form-group">
+            <textarea form ="formi"
+                className="form-control"
+                cols="35"
+                wrap="soft"
+                name="subjects"
+                disabled
+                    placeholder="Seleccionar Materias"></textarea>
 
+        </div>
+                    
 
-                                    <div className="form-inline" style={{padding:'10px'}}>
-                                        <input type="text"
-                                            className="form-control"
-                                            placeholder="QuestionText"
-                                            name="questionName"
-                                            onChange={this.handleNameChange}
-                                            required></input>
-                                    </div>
-                                    <div className="form-group" style={{padding:'10px'}}>
-                                        <textarea form ="formi"
-                                            className="form-control"
-                                            cols="35"
-                                            wrap="soft"
-                                            placeholder="Description"
-                                                name="questionDescription"
-                                                onChange={this.handleDescriptionChange}
-                                            required></textarea>
-
-                                    </div>
-                                    
-                                    <div className="form-group" style={{padding:'10px'}}>
-                                        
-                                        <div className="form-inline" style={{marginTop:'20px'}}>
-                                        <button 
-                                        onClick={this.createQuestion}
-                                        className="btn btn-success" 
-                                            style={{padding:'10px'}}
-                                        > Create</button>
-                                    </div>  
-                                    
-
-                                   </div>
-                                </div>
-                               </div>
-
-                                  </SkyLight>
-                                </div>
-
-                        </form>
-
-                        <div className="list-group">
-                            <h4 >Survey Questions </h4>
-                            <ListGroup>
-                                {questionList}
-                          </ListGroup>
-                      
-                        </div>
-                        
-                        
-                    </div>
-                    <button onClick={this.createSurvey} className='btn btn-success'> Create</button>
+                    <button onClick={this.createSurvey} className='btn btn-success'> Guardar </button>
                 </div>
             </div>
         )

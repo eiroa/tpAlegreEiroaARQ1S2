@@ -51,6 +51,7 @@ class TestQuestion extends React.Component {
         
         this.state.newAnswer.question = this.state.question._links.self.href;
         this.saveAnswer( this.state.newAnswer );
+        window.history.back();
 
     }
     
@@ -93,14 +94,14 @@ class TestQuestion extends React.Component {
                     <div className="user-poll-section">
                         <div className="panel panel-default">
                             <div className="panel-heading">
-                                <strong>Question: </strong>{title}
+                                <strong>Pregunta: </strong>{title}
 
                             </div>
                             <div className="panel-body">
                                 {radioOptions}
                                 
                                 <hr />
-                                <h5 className="text-danger">Result Of User Votes: </h5>
+                                <h5 className="text-danger">Resultados de votos: </h5>
                                 <hr />
                                 
                                 
@@ -111,7 +112,7 @@ class TestQuestion extends React.Component {
                             </div>
                             <div className="panel-footer">
                                 <button className="btn btn-success btn-sm" onClick={this.onSave}>
-                                    <span className="glyphicon glyphicon-bell"></span> Save answer</button>
+                                    <span className="glyphicon glyphicon-bell"></span> Guardar respuesta</button>
                             </div>
                         </div>
 

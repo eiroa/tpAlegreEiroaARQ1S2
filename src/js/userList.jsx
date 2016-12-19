@@ -26,6 +26,8 @@ class UserList extends React.Component { // definimos la estructura de una lista
         this.handleDelete = this.handleDelete.bind( this );
         this.handleAnswer = this.handleAnswer.bind(this);
         this.handleAction = this.handleAction.bind(this);
+        this.handleCreate = this.handleCreate.bind( this );
+        this.onDeleteRow = this.onDeleteRow.bind(this);
         this.sleep = this.sleep.bind(this);
         this.loadUsers = this.loadUsers.bind(this);
         this.getSelectedRow = this.getSelectedRow.bind(this);
@@ -36,6 +38,20 @@ class UserList extends React.Component { // definimos la estructura de una lista
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
     
+    handleCreate( e ) {
+        e.preventDefault();
+        window.location = "#createUser";
+    }
+    
+    onDeleteRow(row){
+        return client( { method: 'DELETE', path: row.key }).then( response => {
+            console.log("user deleted")
+            this.sleep(150);
+            window.location = "#users";
+        }).then();
+        
+    }
+    
     loadUsers() {
         
         
@@ -43,19 +59,6 @@ class UserList extends React.Component { // definimos la estructura de una lista
             this.setState({users: userCollection.entity._embedded.users});
             console.log("users Loaded: "+ this.state.users);
         });
-//        
-//        follow( client, root, [
-//                               { rel: 'users', params: { size: pageSize } }]
-//                           )
-//                           
-//        follow( client, root, ['users'] )
-//                return client( {
-//                    method: 'GET',
-//                    path: survey._links.questions.href,
-//                    headers: { 'Content-Type': 'application/json' }
-//                }).then( response => {
-//                    this.setState({questions: response.entity._embedded.questions});
-//                    console.log("questions Loaded: "+ this.state.questions);
         
     }
     
@@ -74,7 +77,7 @@ class UserList extends React.Component { // definimos la estructura de una lista
     }
     
     getSelectedRow(){
-        return JSON.parse(localStorage.getItem('surveySelected'));
+        return JSON.parse(localStorage.getItem('userSelected'));
     }
     
     handleAnswer(){
@@ -88,7 +91,7 @@ class UserList extends React.Component { // definimos la estructura de una lista
     
     handleDelete() {
         this.handleAction(
-                this.props.onDeleteRow
+                this.onDeleteRow
          );
     }
     
@@ -218,18 +221,9 @@ class UserList extends React.Component { // definimos la estructura de una lista
            <div>
                     
                 
-            <div className="form-inline" style={{padding:'10px'}}>
-                Page size
-                <input ref="pageSize"
-                    type="number"
-                    min="1" max="50" step="1" 
-                    className="form-control"
-                    name="pagination"
-                    onInput={this.handleInput}
-                    defaultValue={2}
-                    ></input>
-            </div>
-            
+            <div style={{padding:'10px'}}>
+            <button className="btn btn-success" onClick={this.handleCreate}> Crear nuevo usuario</button>
+          </div>
                 </div>
             </div>
         )}

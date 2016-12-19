@@ -26,10 +26,15 @@ public class Career {
 	
 	private @Version @JsonIgnore Long version;
 	
+	public Career() {
+	}
+	
 	public Career(String name) {
 		this.name = name;
 		this.subjects = new ArrayList<Subject>();
 	}
+	
+	
 
 	public void addSubject(Subject aSubject) {
 		subjects.add(aSubject);		

@@ -118,7 +118,7 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                     
                     
                     var but =<div>    
-                <button  style={{marginLeft:'5px'}} className="btn btn-success" onClick={this.handleAnswer}> Responder pregunta</button> 
+                <button  style={{marginLeft:'5px'}} className="btn btn-success" onClick={this.handleAnswer}> Ver pregunta</button> 
              </div>
                     
                     
@@ -179,9 +179,6 @@ class QuestionList extends React.Component { // definimos la estructura de una l
                             <TableHeaderColumn dataFormat={actionsFormatter} dataAlign="center">Acciones</TableHeaderColumn>
                         </BootstrapTable>
                        
-                       <div>
-                             <button className="btn - btn-success"> Guardar respuestas </button>   
-                        </div>
                       </div>
                     )
                 }

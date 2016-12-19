@@ -10,47 +10,46 @@ const client = require( './client' );
 const root = '/api';
 const follow = require( './follow' )
 
-class CreateSurvey extends React.Component {
+class CreateUser extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
                 showCreateQuestionDialog: false,
-                newSurvey: {questions:[]}
+                newSurvey: {}
               };
         this.handleClickCreateQuestion = this.handleClickCreateQuestion.bind(this);
         this.onCreate = this.onCreate.bind(this);
-        this.createSurvey = this.createSurvey.bind(this);
-        this.createQuestion = this.createQuestion.bind(this);
+        this.createUser = this.createUser.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-        
-        this.handleSurveyNameChange = this.handleSurveyNameChange.bind(this);
-        this.handleSurveyDescriptionChange = this.handleSurveyDescriptionChange.bind(this);
+        this.handleStudentIdChange = this.handleStudentIdChange.bind(this);
+        this.handleSurnameChange = this.handleSurnameChange.bind(this);
+        this.handleMailChange = this.handleMailChange.bind(this);
     }
     
     
     
     
     handleNameChange(e){
-        this.setState({questionName: e.target.value});
+        this.setState({name: e.target.value});
      }
     
-    handleDescriptionChange(e){
-        this.setState({questionDescription: e.target.value});
+    handleStudentIdChange(e){
+        this.setState({studentId: e.target.value});
+     }
+    
+    handleMailChange(e){
+        this.setState({mail: e.target.value});
      }
     
     
-    handleSurveyNameChange(e){
-        this.setState({surveyName: e.target.value});
+    handleSurnameChange(e){
+        this.setState({surname: e.target.value});
      }
     
-    handleSurveyDescriptionChange(e){
-        this.setState({surveyDescription: e.target.value});
-     }
     
     
     onCreate( newSurvey ) {
-        follow( client, root, ['surveys'] ).then( surveyCollection => {
+        follow( client, root, ['users'] ).then( surveyCollection => {
             return client( {
                 method: 'POST',
                 path: surveyCollection.entity._links.self.href,
@@ -59,41 +58,26 @@ class CreateSurvey extends React.Component {
             })
         }).then( response => {
             return follow( client, root, [
-                { rel: 'surveys', params: { 'size': 2} }] );
+                { rel: 'users', params: { 'size': 2} }] );
         });
     }
     
-    createSurvey(e){
+    createUser(e){
         e.preventDefault();
         
         
-        this.state.newSurvey.name = this.state.surveyName;
-        this.state.newSurvey.description = this.state.surveyDescription;
+        this.state.newSurvey.name = this.state.name;
+        this.state.newSurvey.surname = this.state.surname;
+        this.state.newSurvey.studentId = this.state.studentId;
+        this.state.newSurvey.mail = this.state.mail;
         
         this.onCreate( this.state.newSurvey );
 
 
         // Navigate away from the dialog to hide it.
-        window.location = "#";
+        window.location = "#users";
     }
     
-    createQuestion(e){
-        e.preventDefault();
-        
-        var newQuestion = {};
-        
-        newQuestion.questionText = this.state.questionName;
-        newQuestion.description = this.state.questionDescription;
-        
-        this.state.newSurvey.questions.push(newQuestion);
-
-        // Navigate away from the dialog to hide it.
-        this.setState({
-            showCreateQuestionDialog: false
-        });
-        
-        this.onCloseClicked();
-    }
     
     handleClickCreateQuestion() {
         this.setState({
@@ -103,14 +87,10 @@ class CreateSurvey extends React.Component {
     
     render() {
         
-        
-        var questionList = this.state.newSurvey.questions.map(q  => {
-                        return <ListGroupItem href="#test">{q.questionText}</ListGroupItem>
-                      });
     
         return (
             <div   className="panel panel-primary" id="panelNewIdea">
-                <div className="panel-heading"><h3>Create new survey</h3></div>
+                <div className="panel-heading"><h3>Crear nuevo usuario</h3></div>
 
                 <div className="panel-body" id="formi" style={{ marginTop: '30px' }}>
 
@@ -118,89 +98,38 @@ class CreateSurvey extends React.Component {
                     <div className="form-group">
                         <input type="text"
                             className="form-control"
-                            placeholder="Title"
-                            name="surveyName"
-                                onChange={this.handleSurveyNameChange}
+                            placeholder="Nombres"
+                            name="name"
+                                onChange={this.handleNameChange}
                                 required></input>
                     </div>
                     <div className="form-group">
-                        <textarea form ="formi"
-                            className="form-control"
-                            cols="35"
-                            wrap="soft"
-                            name="surveyDescription"
-                                onChange={this.handleSurveyDescriptionChange}
-                                placeholder="Description"></textarea>
-
-                    </div>
+                    <input type="text"
+                        className="form-control"
+                        placeholder="Apellidos"
+                        name="surname"
+                            onChange={this.handleSurnameChange}
+                            required></input>
+                </div>
+                <div className="form-group">
+                <input type="text"
+                    className="form-control"
+                    placeholder="Legajo"
+                    name="studentId"
+                        onChange={this.handleStudentIdChange}
+                        required></input>
+            </div>
+            <div className="form-group">
+            <input type="text"
+                className="form-control"
+                placeholder="Mail"
+                name="mail"
+                    onChange={this.handleMailChange}
+                    required></input>
+        </div>
                     
 
-                    <div className="form-group well">
-                        <form className="form-inline" role="form" style={{ padding: '10px' }} name="urlForm">
-                            <div style={{ padding: '5px' }}>
-                                <button onClick={() => this.refs.simpleDialog.show()}  
-                                className="btn btn-info pull-right" >
-                                    Add question 
-                                </button>
-                                    
-                                    <SkyLight hideOnOverlayClicked 
-                                    ref="simpleDialog" 
-                                        title="Create a new Text Question">
-                                   <div  className="panel panel-primary" id="panelNewQuestion">
-                                    <div className="panel-body" id="questionForm" style={{ marginTop: '10px' }}>
-
-
-                                    <div className="form-inline" style={{padding:'10px'}}>
-                                        <input type="text"
-                                            className="form-control"
-                                            placeholder="QuestionText"
-                                            name="questionName"
-                                            onChange={this.handleNameChange}
-                                            required></input>
-                                    </div>
-                                    <div className="form-group" style={{padding:'10px'}}>
-                                        <textarea form ="formi"
-                                            className="form-control"
-                                            cols="35"
-                                            wrap="soft"
-                                            placeholder="Description"
-                                                name="questionDescription"
-                                                onChange={this.handleDescriptionChange}
-                                            required></textarea>
-
-                                    </div>
-                                    
-                                    <div className="form-group" style={{padding:'10px'}}>
-                                        
-                                        <div className="form-inline" style={{marginTop:'20px'}}>
-                                        <button 
-                                        onClick={this.createQuestion}
-                                        className="btn btn-success" 
-                                            style={{padding:'10px'}}
-                                        > Create</button>
-                                    </div>  
-                                    
-
-                                   </div>
-                                </div>
-                               </div>
-
-                                  </SkyLight>
-                                </div>
-
-                        </form>
-
-                        <div className="list-group">
-                            <h4 >Survey Questions </h4>
-                            <ListGroup>
-                                {questionList}
-                          </ListGroup>
-                      
-                        </div>
-                        
-                        
-                    </div>
-                    <button onClick={this.createSurvey} className='btn btn-success'> Create</button>
+                    <button onClick={this.createUser} className='btn btn-success'> Guardar</button>
                 </div>
             </div>
         )
@@ -208,4 +137,4 @@ class CreateSurvey extends React.Component {
 }
 
 
-module.exports = CreateSurvey;
+module.exports = CreateUser;

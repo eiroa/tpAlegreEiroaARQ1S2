@@ -28,6 +28,7 @@ class SubjectList extends React.Component { // definimos la estructura de una li
         this.handleAction = this.handleAction.bind(this);
         this.hanldeCreate = this.handleCreate.bind(this);
         this.sleep = this.sleep.bind(this);
+        this.onDeleteRow = this.onDeleteRow.bind( this );
         this.loadSubjects = this.loadSubjects.bind(this);
         this.getSelectedRow = this.getSelectedRow.bind(this);
     }
@@ -35,6 +36,19 @@ class SubjectList extends React.Component { // definimos la estructura de una li
     sleep(ms){
         //used for waiting execution of bootstrap table events
         return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    
+    onDeleteRow(row){
+        client( { method: 'DELETE', path: row.key }).then( response => {
+            console.log("subject deleted");
+            this.sleep(100);
+            window.location = "#subjects";
+            location.reload(true);
+        });
+        this.sleep(300);
+        location.reload(true);
+        window.location= "#subjects";
+       
     }
     
     loadSubjects() {
@@ -53,7 +67,7 @@ class SubjectList extends React.Component { // definimos la estructura de una li
     
     handleCreate( e ) {
         e.preventDefault();
-//        window.location = "#createSubject";
+        window.location = "#createSubject";
     }
 
     handleInput( e ) {
@@ -81,7 +95,7 @@ class SubjectList extends React.Component { // definimos la estructura de una li
     
     handleDelete() {
         this.handleAction(
-                this.props.onDeleteRow
+                this.onDeleteRow
          );
     }
     
@@ -123,7 +137,9 @@ class SubjectList extends React.Component { // definimos la estructura de una li
                      }
                 });
         
-        var keyRow = {key: ""};
+        var keyRow = {key: ""};<div style={{padding:'10px'}}>
+        <button className="btn btn-success" onClick={this.handleCreate}> Crear nueva materia</button>
+        </div>
         
         var getRow = function(){
             return keyRow;
@@ -178,7 +194,7 @@ class SubjectList extends React.Component { // definimos la estructura de una li
             console.log("selected: " + isSelected)
             keyRow.key = row.key;
             var dataToStore = JSON.stringify(row);
-            localStorage.setItem('subjetSelected', dataToStore);
+            localStorage.setItem('subjectSelected', dataToStore);
 
           }
         
@@ -205,17 +221,6 @@ class SubjectList extends React.Component { // definimos la estructura de una li
            <div>
                     
                 
-            <div className="form-inline" style={{padding:'10px'}}>
-                Page size
-                <input ref="pageSize"
-                    type="number"
-                    min="1" max="50" step="1" 
-                    className="form-control"
-                    name="pagination"
-                    onInput={this.handleInput}
-                    defaultValue={2}
-                    ></input>
-            </div>
             <div style={{padding:'10px'}}>
             <button className="btn btn-success" onClick={this.handleCreate}> Crear nueva materia</button>
           </div>

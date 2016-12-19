@@ -23,6 +23,10 @@ public class Subject {
 	boolean isShared;
 	
 	private @Version @JsonIgnore Long version;
+	
+	public Subject(){
+		
+	}
 
 	public Subject(String name,boolean isShared) {
 		this.name = name;

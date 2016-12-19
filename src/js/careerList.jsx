@@ -27,6 +27,7 @@ class CareerList extends React.Component { // definimos la estructura de una lis
         this.handleAnswer = this.handleAnswer.bind(this);
         this.handleAction = this.handleAction.bind(this);
         this.hanldeCreate = this.handleCreate.bind(this);
+        this.onDeleteRow = this.onDeleteRow.bind( this );
         this.sleep = this.sleep.bind(this);
         this.loadCareers = this.loadCareers.bind(this);
         this.getSelectedRow = this.getSelectedRow.bind(this);
@@ -37,9 +38,18 @@ class CareerList extends React.Component { // definimos la estructura de una lis
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
     
+    onDeleteRow(row){
+        return client( { method: 'DELETE', path: row.key }).then( response => {
+            console.log("subject deleted")
+            this.sleep(200);
+            window.location = "#careers";
+        });
+        
+    }
+    
     handleCreate( e ) {
         e.preventDefault();
-//        window.location = "#createCareer";
+        window.location = "#createCareer";
     }
     
     loadCareers() {
@@ -81,7 +91,7 @@ class CareerList extends React.Component { // definimos la estructura de una lis
     
     handleDelete() {
         this.handleAction(
-                this.props.onDeleteRow
+                this.onDeleteRow
          );
     }
     
@@ -94,7 +104,7 @@ class CareerList extends React.Component { // definimos la estructura de una lis
     }
 
     handleNavFirst( e ) {
-        e.preventDefault();
+        e.preventDefault();<Route path="/createSubject" component={CreateSubject}/>
         this.props.onNavigate( this.props.links.first.href );
     }
 
@@ -179,7 +189,6 @@ class CareerList extends React.Component { // definimos la estructura de una lis
             keyRow.key = row.key;
             var dataToStore = JSON.stringify(row);
             localStorage.setItem('careerSelected', dataToStore);
-
           }
         
         
@@ -205,17 +214,6 @@ class CareerList extends React.Component { // definimos la estructura de una lis
            <div>
                     
                 
-            <div className="form-inline" style={{padding:'10px'}}>
-                Page size
-                <input ref="pageSize"
-                    type="number"
-                    min="1" max="50" step="1" 
-                    className="form-control"
-                    name="pagination"
-                    onInput={this.handleInput}
-                    defaultValue={2}
-                    ></input>
-            </div>
             <div style={{padding:'10px'}}>
             <button className="btn btn-success" onClick={this.handleCreate}> Crear nueva carrera </button>
           </div>

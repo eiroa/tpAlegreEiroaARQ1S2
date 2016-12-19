@@ -22,6 +22,9 @@ const Survey = require('./survey');
 const SurveyList = require('./surveyList');
 const QuestionList = require('./questionList');
 const CreateSurvey = require('./createSurvey');
+const CreateSubject = require('./createSubject');
+const CreateCareer = require('./createCareer');
+const CreateUser = require('./createUser');
 const TestQuestion = require('./testQuestion');
 const UserList = require('./userList');
 const CareerList = require('./careerList');
@@ -208,7 +211,7 @@ class App extends React.Component {// creamos un componente de REACT
             </div>
                 
                 <div style={{padding:'10px'}}>
-                <button className="btn btn-success" onClick={this.handleCreate}> Create new survey</button>
+                <button className="btn btn-success" onClick={this.handleCreate}> Crear nueva encuesta</button>
               </div>
           </div>
         )
@@ -227,12 +230,14 @@ ReactDOM.render(
         <Router history={hashHistory}>
             <Route path="/" component={App}/>
             <Route path="/createSurvey" component={CreateSurvey}/>
+            <Route path="/createCareer" component={CreateCareer}/>
+            <Route path="/createSubject" component={CreateSubject}/>
+            <Route path="/createUser" component={CreateUser}/>
             <Route path="/careers" component={CareerList}/>
             <Route path="/subjects" component={SubjectList}/>
             <Route path="/question" component={TestQuestion}/>
             <Route path="/users" component={UserList}/>
             <Route path="/:key" name="answerSurvey" component={QuestionList} />
-            
         </Router>
     ),
     document.getElementById( 'react' )
