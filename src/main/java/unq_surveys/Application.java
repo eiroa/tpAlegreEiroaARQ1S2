@@ -47,7 +47,7 @@ public class Application implements CommandLineRunner {
 	private QuestionAnswerService questionAnswerRepo;
 	
 	@Autowired
-	private UserService userService;
+	private UserService userRepo;
 	
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -64,9 +64,10 @@ public class Application implements CommandLineRunner {
 		careerRepo.deleteAll();
 		questionAnswerRepo.deleteAll();
 		questionRepo.deleteAll();
+		userRepo.deleteAll();
 		
 		CareersBuilder.build(careerRepo,subjectRepo);
-		SurveysBuilder.build(surveyRepo,questionRepo, careerRepo,userService);
+		SurveysBuilder.build(surveyRepo,questionRepo, careerRepo,userRepo);
 		
 		
 	}

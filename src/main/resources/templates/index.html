@@ -52,43 +52,32 @@ tags-input .host {
 <body>
 
 	<nav class="navbar navbar-default">
-		<ul class="nav navbar-nav">
-			<li><a> <strong id="user-id">User</strong></a></li>
-			<!-- <li><a href="/#/register"><button class="btn btn-info">Register</button></a>
-			</li> -->
-		</ul>
-		<ul class="nav navbar-nav pull-right">
-		<!-- 
-		
-		<li>
-				<button id="logout" class="btn btn-warning"
-					style="margin-top: 7px; margin-right: 10px;">Logout</button>
+		<ul class="nav nav-pills">   
+  <li><a> <strong id="user-id">Usuario</strong></a></li>
+  
+  <li role="presentation" class="dropdown"> 
+  	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Índice 
+  	<span class="caret"></span> </a> 
+  	
+  	<ul class="dropdown-menu"> 
+  	
+	  	<li><a href="#/users">Usuarios</a></li>
+	  	<li><a href="#/careers">Carreras</a></li>
+	  	<li><a href="#/subjects">Materias</a></li>   
+	  	<li role="separator" class="divider"></li> 
+	  	<li><a href="#">Encuestas disponibles</a></li>  
+  	</ul> 
+  </li> 
+
+<li class="pull-right"><a href="/#/"><button class="btn btn-primary"><span class="glyphicon glyphicon-home"></span></button></a>
 			</li>
-			<li><a href="/#/login"><button class="btn btn-success">Login</button></a>
-			</li>
-		 -->
-			<li><a href="/#/"><button class="btn btn-primary"><span class="glyphicon glyphicon-home"></span></button></a>
-			</li>
-		</ul>
+</ul>
 	</nav>
 
 
 
 
-<!-- 		<div class="col-md-3 col-xs-12 container-fluid" -->
-<!-- 			style="margin-top: 20px; margin-left: 20px; max-height: 600px;"> -->
-<!-- 			<div class="jumbotron pre-scrollable" style="max-height: 600px;"> --> 
-
-
-<!-- 				<div class="well"> --> 
-
-<!--  					<span>Activity Log </span> -->
-
-<!-- 				</div> --> 
-<!-- 			</div> --> 
-<!-- 		</div> -->
-
-		<div class="col-md-9 col-xs-12">
+		<div class="col-md-12 col-xs-12">
 			<div class="container-fluid">
 				<div id="react"></div>
 			</div>
@@ -97,33 +86,7 @@ tags-input .host {
 
 		</div>
 
-		<div class="col-md-2 col-xs-12" style="margin-top: 50px;">
-			<div class="jumbotron">
 
-				<h4 class="text-info text-center">Actions</h4>
-
-
-
-
-
-				<div class="dropdown text-center">
-					<button class="btn btn-default dropdown-toggle" type="button"
-						id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true"
-						aria-expanded="true">
-						Actions <span class="caret"></span>
-					</button>
-
-					<ul class="dropdown-menu">
-<!-- 						<li ><a href="/#/users">User -->
-<!-- 								administration</a></li> -->
-<!-- 						<li ><a href="/#/careers">Carrers Administration</a></li> -->
-<!-- 						<li ><a href="/#/subjects">Subjects Administration</a></li> -->
-					</ul>
-				</div>
-
-			</div>
-
-		</div>
 </body>
 
 </html>

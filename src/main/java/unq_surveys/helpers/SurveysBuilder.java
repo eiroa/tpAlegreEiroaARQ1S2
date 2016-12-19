@@ -20,16 +20,13 @@ import unq_surveys.services.UserService;
 public class SurveysBuilder {
 
 	public static void build(SurveyService repo, QuestionService questionService, CareerService careerService,UserService userService) {
-		
 				
 		List<Survey> surveys = new ArrayList<Survey>();
-		
 		careerService.getAll().stream().forEach( career -> {
 			surveys.add(SurveysBuilder.buildSurveyForCareer(career));
 		});
-		
-		
 		saveSurveys(surveys, repo, questionService,userService);
+		saveUsers(userService);
 	}
 
 	
@@ -47,15 +44,21 @@ public class SurveysBuilder {
 					q -> 
 					{ 	questionService.save(q); 
 					ObjectId id = questionService.getQuestion(q.getQuestionText()).getId();
-						System.out.println("setting id " + id);
 						q.setId(id);
 					});
 			
 			surveyService.save(s);
-			System.out.println("          checking id questions in survey "+ s.getQuestions().toString() + "            ");
 		});
 		
 		
+	}
+	
+	private static void saveUsers(UserService userService){
+		User u1,u2,u3;
+		u1 = new User("pepe", "sanchez", 1000, "pepe.sanchez@gmail.com");
+		u2 = new User("cacho", "garcia", 2000, "cacho.garcia@gmail.com");
+		u3 = new User("tota", "perez", 3000, "tota.perez@gmail.com");
+		userService.save(u1,u2,u3);
 	}
 
 

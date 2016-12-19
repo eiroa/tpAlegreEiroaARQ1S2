@@ -19,6 +19,8 @@ public class Career {
 	private String id;
 	
 	String name;	
+	
+	
 	List<Subject> subjects;
 	//TODO add List<Student> students field for Career model.
 	

@@ -13,10 +13,11 @@ const follow = require( './follow' );
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import Confirm from 'react-confirm-bootstrap';
 
-class SurveyList extends React.Component { // definimos la estructura de una lista de encuestas
+class SubjectList extends React.Component { // definimos la estructura de una lista de encuestas
 
     constructor( props ) {
         super( props );
+        this.state = { subjects: [],  pageSize: 20 };
         this.handleNavFirst = this.handleNavFirst.bind( this );
         this.handleNavPrev = this.handleNavPrev.bind( this );
         this.handleNavNext = this.handleNavNext.bind( this );
@@ -25,15 +26,35 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         this.handleDelete = this.handleDelete.bind( this );
         this.handleAnswer = this.handleAnswer.bind(this);
         this.handleAction = this.handleAction.bind(this);
+        this.hanldeCreate = this.handleCreate.bind(this);
         this.sleep = this.sleep.bind(this);
+        this.loadSubjects = this.loadSubjects.bind(this);
         this.getSelectedRow = this.getSelectedRow.bind(this);
     }
     
     sleep(ms){
         //used for waiting execution of bootstrap table events
         return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+    }
     
+    loadSubjects() {
+        
+        
+       return follow( client, root, ['subjects'] ).then( subjectCollection => {
+            this.setState({subjects: subjectCollection.entity._embedded.subjects});
+            console.log("subjects Loaded: "+ this.state.subjects);
+        });
+        
+    }
+    
+    componentDidMount() { // que hacer al momento de haber cargado el componente,  se relaciona con el ciclo de vida del objeto DOM
+        this.loadSubjects();
+    }
+    
+    handleCreate( e ) {
+        e.preventDefault();
+//        window.location = "#createSubject";
+    }
 
     handleInput( e ) {
         e.preventDefault();
@@ -46,13 +67,14 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
     }
     
     getSelectedRow(){
-        return JSON.parse(localStorage.getItem('surveySelected'));
+        return JSON.parse(localStorage.getItem('subjectSelected'));
     }
     
     handleAnswer(){
         this.handleAction(
-                function(survey){
-                    window.location = "#answerSurvey?key="+(survey.key);
+                function(user){
+                    console.log("not yet implemented");
+                   // window.location = "#answerSurvey?key="+(survey.key);
                  }
         );
     }
@@ -64,7 +86,7 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
     }
     
     handleAction(action){
-        this.sleep(75).then(() => {
+        this.sleep(50).then(() => {
             if(this.getSelectedRow() != null){
                 action(this.getSelectedRow());
            }
@@ -93,25 +115,13 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
     
 
     render() {
-        var surveysCopy = this.props.surveys.map ( 
-                function(s){ 
-                    return  {key:s.entity._links.self.href,
-                        name: s.entity.name,
-                        description: s.entity.description,
-                        entity: s.entity,
-                        _links: s.entity._links
+        var subjectsCopy = this.state.subjects.map ( 
+                function(u){ 
+                    return  {key:u._links.self.href,
+                        name: u.name,
+                        _links: u._links
                      }
                 });
-        
-        var surveys = this.props.surveys.map( survey =>
-            <Survey key={survey.entity._links.self.href}
-                survey={survey}
-                attributes={this.props.attributes}
-                onUpdate={this.props.onUpdate}
-                onDelete={this.props.onDelete}
-                onDeleteDirect={this.props.onDeleteDirect}/>
-            
-        );
         
         var keyRow = {key: ""};
         
@@ -122,12 +132,12 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         var but =<div>    
         <Confirm
         onConfirm={this.handleDelete}
-        body="Are you sure you want to delete this survey?"
-        confirmText="Confirm Delete"
-        title="Deleting">
+        body="¿Desea elimianr esta materia?"
+        confirmText="Confirmar"
+        title="Eliminar">
         <button className="btn btn-danger">Eliminar</button>
     </Confirm> 
-    <button  style={{marginLeft:'5px'}} onClick={this.handleAnswer} className="btn btn-success"> Responder </button> 
+    <button  style={{marginLeft:'5px'}} onClick={this.handleAnswer} className="btn btn-success"> Mostrar detalles </button> 
  </div>
         
         
@@ -138,22 +148,22 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         
         
         var navLinks = [];
-        if ( "last" in this.props.links ) {
-            navLinks.push( <button  className="btn btn-primary pull-right" key="last" onClick={this.handleNavLast}><span className="glyphicon glyphicon-forward"/> </button> );
-        }
-        
-        if ( "next" in this.props.links ) {
-            navLinks.push( <button  className="btn btn-primary pull-right" key="next" onClick={this.handleNavNext}><span className="glyphicon glyphicon-triangle-right"/> </button> );
-        }
-        
-        if ( "prev" in this.props.links ) {
-            navLinks.push( <button className="btn btn-primary pull-right" key="prev" onClick={this.handleNavPrev}><span className="glyphicon glyphicon-triangle-left" /> </button> );
-        }
-       
-        
-        if ( "first" in this.props.links ) {
-            navLinks.push( <button  className="btn btn-primary pull-right" key="first" onClick={this.handleNavFirst}><span className="glyphicon glyphicon-backward"/></button> );
-        }
+//        if ( "last" in this.props.links ) {
+//            navLinks.push( <button  className="btn btn-primary pull-right" key="last" onClick={this.handleNavLast}><span className="glyphicon glyphicon-forward"/> </button> );
+//        }
+//        
+//        if ( "next" in this.props.links ) {
+//            navLinks.push( <button  className="btn btn-primary pull-right" key="next" onClick={this.handleNavNext}><span className="glyphicon glyphicon-triangle-right"/> </button> );
+//        }
+//        
+//        if ( "prev" in this.props.links ) {
+//            navLinks.push( <button className="btn btn-primary pull-right" key="prev" onClick={this.handleNavPrev}><span className="glyphicon glyphicon-triangle-left" /> </button> );
+//        }
+//       
+//        
+//        if ( "first" in this.props.links ) {
+//            navLinks.push( <button  className="btn btn-primary pull-right" key="first" onClick={this.handleNavFirst}><span className="glyphicon glyphicon-backward"/></button> );
+//        }
         var selectRowProp = {
                 mode: "radio", // or checkbox
                 clickToSelect: true,
@@ -168,7 +178,7 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
             console.log("selected: " + isSelected)
             keyRow.key = row.key;
             var dataToStore = JSON.stringify(row);
-            localStorage.setItem('surveySelected', dataToStore);
+            localStorage.setItem('subjetSelected', dataToStore);
 
           }
         
@@ -178,10 +188,10 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
         return (
             <div >
                
-                
+                <h4> Listado de materias </h4>
             <BootstrapTable 
             ref="table"
-            data={surveysCopy} 
+            data={subjectsCopy} 
             striped={true} 
             hover={true} 
             condensed={true} 
@@ -189,7 +199,7 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
             >
                 <TableHeaderColumn dataField="key" isKey={true} hidden={true} >Key</TableHeaderColumn>
                 <TableHeaderColumn dataField="name"  dataSort={true} dataAlign="center">Nombre</TableHeaderColumn>
-                <TableHeaderColumn dataFormat={actionsFormatter} dataAlign="center">Acciones</TableHeaderColumn>
+                <TableHeaderColumn dataFormat={actionsFormatter} dataAlign="center"></TableHeaderColumn>
             </BootstrapTable>
             
            <div>
@@ -203,14 +213,15 @@ class SurveyList extends React.Component { // definimos la estructura de una lis
                     className="form-control"
                     name="pagination"
                     onInput={this.handleInput}
-                    defaultValue={this.props.pageSize}
+                    defaultValue={2}
                     ></input>
-                    {navLinks}
             </div>
-            
+            <div style={{padding:'10px'}}>
+            <button className="btn btn-success" onClick={this.handleCreate}> Crear nueva materia</button>
+          </div>
                 </div>
             </div>
         )}
    }
     
-module.exports = SurveyList;
+module.exports = SubjectList;
